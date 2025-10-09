@@ -59,13 +59,7 @@ export const AccountProvider = ({ children }: Props) => {
   const { addNotification } = useNotifications();
   const { addPoolAccount, addRagequit, addWithdrawal } = useSdk();
   const {
-    aspData: {
-      mtLeavesData,
-      fetchDepositsByLabelAndScope,
-      refetchMtLeaves,
-      isError: aspError,
-      isLoading: aspIsLoading,
-    },
+    aspData: { mtLeavesData, fetchDepositsByLabel, refetchMtLeaves, isError: aspError, isLoading: aspIsLoading },
   } = useExternalServices();
   const { poolAccount, setPoolAccount } = usePoolAccountsContext();
 
@@ -112,13 +106,12 @@ export const AccountProvider = ({ children }: Props) => {
 
   // Updates the review status and timestamp of deposit entries in pool accounts based on deposit data from ASP
   const processDeposits = useCallback(
-    (_poolAccounts: PoolAccount[], depositsByScope: Record<string, DepositsByLabelResponse>, onFinish: () => void) => {
-      if (!_poolAccounts || !depositsByScope) throw Error('Pool accounts or deposits data not found');
+    (_poolAccounts: PoolAccount[], deposits: DepositsByLabelResponse, onFinish: () => void) => {
+      if (!_poolAccounts || !deposits) throw Error('Pool accounts or deposits data not found');
       if (!mtLeavesData?.aspLeaves) throw Error('ASP leaves not found');
 
       const updatedPoolAccounts = _poolAccounts.map((entry) => {
-        const scopeDeposits = depositsByScope[entry.scope];
-        const deposit = scopeDeposits.find((d) => d.label === entry.label.toString());
+        const deposit = deposits.find((d) => d.label === entry.label.toString());
         if (!deposit) return entry;
 
         if (entry.reviewStatus === ReviewStatus.EXITED) {
@@ -163,7 +156,12 @@ export const AccountProvider = ({ children }: Props) => {
         labelsByScope[scope] = [...(labelsByScope[scope] || []), num.toHex(label)];
       });
 
-      fetchDepositsByLabelAndScope(labelsByScope)
+      const depositsByScope = () =>
+        Promise.allSettled(Object.entries(labelsByScope).map(([scope, labels]) => fetchDepositsByLabel(labels, scope)))
+          .then((result) => result.map((deposits) => (deposits.status === 'fulfilled' ? deposits.value : [])))
+          .then((d) => d.flat());
+
+      depositsByScope()
         .then((deposits) => {
           processDeposits(_poolAccounts, deposits, () => setIsLoading(false));
         })
@@ -171,7 +169,7 @@ export const AccountProvider = ({ children }: Props) => {
           setIsLoading(false);
         });
     },
-    [poolAccounts, fetchDepositsByLabelAndScope, processDeposits],
+    [poolAccounts, fetchDepositsByLabel, processDeposits],
   );
 
   const handleLoadAccount = useCallback(
