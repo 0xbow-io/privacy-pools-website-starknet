@@ -3,7 +3,6 @@
 import { createContext, SetStateAction, Dispatch, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { num } from 'starknet';
 import { ChainData } from '~/config';
-import { getEnv } from '~/config/env';
 import { useChainContext, useExternalServices, useNotifications, usePoolAccountsContext } from '~/hooks';
 import { useAccountManager } from '~/hooks/useAccountManager';
 import { useSdk } from '~/hooks/useWorkerSdk';
@@ -14,8 +13,6 @@ import {
   AddRagequitCommand,
   AddWithdrawalCommand,
 } from '~/types/worker-commands.interface';
-
-const { TEST_MODE } = getEnv();
 
 type ContextType = {
   seed: string | null;
