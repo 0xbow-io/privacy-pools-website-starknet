@@ -21,13 +21,14 @@ const fetchPublic = async <T>(url: string, init?: RequestInit): Promise<T> => {
   return response.json();
 };
 
-const fetchPrivate = async <T>(url: string, headers?: Record<string, string>): Promise<T> => {
+const fetchPrivate = async <T>(url: string, init?: RequestInit): Promise<T> => {
   const token = await fetchJWT();
 
   const response = await fetch(url, {
+    ...init,
     headers: {
       Authorization: `Bearer ${token}`,
-      ...headers,
+      ...init?.headers,
     },
   });
 
@@ -48,7 +49,18 @@ const aspClient = {
 
   fetchDepositsByLabel: (aspUrl: string, chainId: string, scope: string, labels: string[]) =>
     fetchPrivate<DepositsByLabelResponse>(`${aspUrl}/${chainId}/private/deposits/${scope}`, {
-      'X-labels': labels.join(','),
+      headers: {
+        'X-labels': labels.join(','),
+      },
+    }),
+
+  fetchDepositsByLabelAndScope: (aspUrl: string, chainId: string, depositsGroupedByScope: Record<string, string[]>) =>
+    fetchPrivate<Record<string, DepositsByLabelResponse>>(`${aspUrl}/${chainId}/private/deposits`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(depositsGroupedByScope),
     }),
 
   fetchMtRoots: (aspUrl: string, chainId: string, scope: string) =>
@@ -60,7 +72,9 @@ const aspClient = {
 
   fetchMtLeaves: (aspUrl: string, chainId: string, scope: string) =>
     fetchPrivate<MtLeavesResponse>(`${aspUrl}/${chainId}/public/mt-leaves`, {
-      [SCOPE_HEADER]: scope,
+      headers: {
+        [SCOPE_HEADER]: scope,
+      },
     }),
 };
 

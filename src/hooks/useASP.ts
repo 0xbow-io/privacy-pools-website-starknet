@@ -17,6 +17,9 @@ export const useASP = (
   mtLeavesData: MtLeavesResponse | undefined;
   allEventsData: AllEventsResponse | undefined;
   fetchDepositsByLabel: (labels: string[]) => Promise<DepositsByLabelResponse>;
+  fetchDepositsByLabelAndScope: (
+    scopedLabels: Record<string, string[]>,
+  ) => Promise<Record<string, DepositsByLabelResponse>>;
   refetchMtLeaves: () => Promise<QueryObserverResult<MtLeavesResponse, Error>>;
 } => {
   const poolInfoQuery = useQuery({
@@ -45,6 +48,11 @@ export const useASP = (
     mutationFn: (labels: string[]) => aspClient.fetchDepositsByLabel(aspUrl, chainId, scope, labels),
   });
 
+  const depositsByScopeAndLabels = useMutation({
+    mutationFn: (deposits: Record<string, string[]>) =>
+      aspClient.fetchDepositsByLabelAndScope(aspUrl, chainId, deposits),
+  });
+
   const isError = poolInfoQuery.isError || mtRootQuery.isError;
   const isLoading = poolInfoQuery.isLoading || mtRootQuery.isLoading || mtLeavesQuery.isLoading;
 
@@ -58,6 +66,7 @@ export const useASP = (
       allEventsData: allEventsQuery.data,
       refetchMtLeaves: mtLeavesQuery.refetch,
       fetchDepositsByLabel: depositsByLabelQuery.mutateAsync,
+      fetchDepositsByLabelAndScope: depositsByScopeAndLabels.mutateAsync,
     }),
     [
       isError,
@@ -68,6 +77,7 @@ export const useASP = (
       depositsByLabelQuery.mutateAsync,
       mtLeavesQuery.data,
       mtLeavesQuery.refetch,
+      depositsByScopeAndLabels,
     ],
   );
 };
