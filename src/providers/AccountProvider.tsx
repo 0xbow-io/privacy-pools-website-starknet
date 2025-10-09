@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, SetStateAction, Dispatch, useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import { num } from 'starknet';
 import { ChainData } from '~/config';
 import { getEnv } from '~/config/env';
 import { useChainContext, useExternalServices, useNotifications, usePoolAccountsContext } from '~/hooks';
@@ -61,7 +62,13 @@ export const AccountProvider = ({ children }: Props) => {
   const { addNotification } = useNotifications();
   const { addPoolAccount, addRagequit, addWithdrawal } = useSdk();
   const {
-    aspData: { mtLeavesData, fetchDepositsByLabel, refetchMtLeaves, isError: aspError, isLoading: aspIsLoading },
+    aspData: {
+      mtLeavesData,
+      fetchDepositsByLabelAndScope,
+      refetchMtLeaves,
+      isError: aspError,
+      isLoading: aspIsLoading,
+    },
   } = useExternalServices();
   const { poolAccount, setPoolAccount } = usePoolAccountsContext();
 
@@ -108,12 +115,13 @@ export const AccountProvider = ({ children }: Props) => {
 
   // Updates the review status and timestamp of deposit entries in pool accounts based on deposit data from ASP
   const processDeposits = useCallback(
-    (_poolAccounts: PoolAccount[], _depositData: DepositsByLabelResponse, onFinish: () => void) => {
-      if (!_poolAccounts || !_depositData) throw Error('Pool accounts or deposits data not found');
+    (_poolAccounts: PoolAccount[], depositsByScope: Record<string, DepositsByLabelResponse>, onFinish: () => void) => {
+      if (!_poolAccounts || !depositsByScope) throw Error('Pool accounts or deposits data not found');
       if (!mtLeavesData?.aspLeaves) throw Error('ASP leaves not found');
 
       const updatedPoolAccounts = _poolAccounts.map((entry) => {
-        const deposit = _depositData.find((d) => d.label === entry.label.toString());
+        const scopeDeposits = depositsByScope[entry.scope];
+        const deposit = scopeDeposits.find((d) => d.label === entry.label.toString());
         if (!deposit) return entry;
 
         if (entry.reviewStatus === ReviewStatus.EXITED) {
@@ -153,21 +161,20 @@ export const AccountProvider = ({ children }: Props) => {
     (newPoolAccounts?: PoolAccount[]) => {
       setIsLoading(true);
       const _poolAccounts = newPoolAccounts ?? poolAccounts;
-      const labels = _poolAccounts.map((entry) => entry.label.toString());
+      const labelsByScope: Record<string, string[]> = {};
+      _poolAccounts.forEach(({ scope, label }) => {
+        labelsByScope[scope] = [...(labelsByScope[scope] || []), num.toHex(label)];
+      });
 
-      fetchDepositsByLabel(labels)
+      fetchDepositsByLabelAndScope(labelsByScope)
         .then((deposits) => {
-          if (deposits.length) {
-            processDeposits(_poolAccounts, deposits, () => setIsLoading(false));
-          } else {
-            setIsLoading(false);
-          }
+          processDeposits(_poolAccounts, deposits, () => setIsLoading(false));
         })
         .catch(() => {
           setIsLoading(false);
         });
     },
-    [fetchDepositsByLabel, processDeposits, poolAccounts],
+    [poolAccounts, fetchDepositsByLabelAndScope, processDeposits],
   );
 
   const handleLoadAccount = useCallback(
