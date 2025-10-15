@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { StarknetAddress } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { addBreadcrumb } from '@sentry/nextjs';
 import { useSendTransaction, useAccount } from '@starknet-react/core';
 import { useChainContext, useAccountContext, useModal, useNotifications, usePoolAccountsContext } from '~/hooks';
@@ -39,7 +40,7 @@ export const useExit = () => {
 
       const hash = (await sendAsync([rageQuitCall])).transaction_hash as `0x${string}`;
 
-      setTransactionHash(hash);
+      setTransactionHash(hash as StarknetAddress);
       setModalOpen(ModalType.PROCESSING);
 
       const receipts = await fetchEvents({

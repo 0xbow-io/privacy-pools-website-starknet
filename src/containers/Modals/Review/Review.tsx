@@ -25,10 +25,9 @@ import { ExitMessage } from './ExitMessage';
 import { PoolAccountSection } from './PoolAccountSection';
 
 export const ReviewModal = () => {
-  const { isClosable, setModalOpen } = useModal();
+  const { isClosable, setModalOpen, modalOpen } = useModal();
   const { deposit, isLoading: isDepositLoading } = useDeposit();
   const { isLoading: isWithdrawLoading } = useWithdraw();
-  // const isWithdrawLoading = false;
   const { isLoading: isExitLoading } = useExit();
   const { actionType, feeCommitment, amount, target } = usePoolAccountsContext();
   const [isConfirmClicked, setIsConfirmClicked] = useState(false);
@@ -92,7 +91,7 @@ export const ReviewModal = () => {
   // Reset isConfirmClicked when modal opens or when starting a new action
   useEffect(() => {
     setIsConfirmClicked(false);
-  }, [actionType, amount, target]);
+  }, [actionType, amount, target, modalOpen]);
 
   return (
     <BaseModal type={ModalType.REVIEW} hasBackground isClosable={isClosable}>
@@ -141,7 +140,13 @@ export const ReviewModal = () => {
           </PulsingButton>
         ) : (
           <SButton disabled={isConfirmDisabled} onClick={handleConfirm} data-testid='confirm-review-button'>
-            {(isLoading || isConfirmClicked) && <CircularProgress size='1.6rem' />}
+            {(isLoading || isConfirmClicked) && (
+              <div>
+                loading: {isLoading.toString()}
+                isConfirmClicked: {isConfirmClicked.toString()}
+                <CircularProgress size='1.6rem' />
+              </div>
+            )}
             {!isLoading &&
               !isConfirmClicked &&
               actionType === EventType.WITHDRAWAL &&

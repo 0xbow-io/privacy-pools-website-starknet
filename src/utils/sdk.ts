@@ -2,10 +2,8 @@
 
 import {
   Circuits,
-  CommitmentProof,
   WithdrawalProofInput,
   Secret,
-  generateMerkleProof,
   Hash,
   AccountService,
   PrivacyPoolAccount,
@@ -17,11 +15,10 @@ import {
   StarknetAddress,
   Address,
   SNContractInteractionsService,
-} from '@fatsolutions/privacy-pools-core-starknet-sdk';
-import {
-  AbiEventName,
   StarknetDataService,
-} from 'node_modules/@fatsolutions/privacy-pools-core-starknet-sdk/dist/data.service';
+  generateMerkleProof,
+} from '@fatsolutions/privacy-pools-core-starknet-sdk';
+import { AbiEventName } from '@fatsolutions/privacy-pools-core-starknet-sdk/data.service';
 import { RpcProvider } from 'starknet';
 import { PoolInfo } from '~/config';
 import { PoolAccount, ReviewStatus } from '~/types';
@@ -43,34 +40,6 @@ export const initializeSDK = () => {
     sdk = new PrivacyPoolStarknetSDK(circuits);
   }
   return sdk!;
-};
-
-/**
- * Generates a zero-knowledge proof for a commitment using Poseidon hash.
- *
- * @param value - The value being committed to
- * @param label - Label associated with the commitment
- * @param nullifier - Unique nullifier for the commitment
- * @param secret - Secret key for the commitment
- * @returns Promise resolving to proof and public signals
- * @throws {ProofError} If proof generation fails
- */
-export const generateRagequitProof = async (commitment: AccountCommitment): Promise<CommitmentProof> => {
-  const sdkInstance = initializeSDK();
-  return await sdkInstance.proveCommitment(commitment.value, commitment.label, commitment.nullifier, commitment.secret);
-};
-
-/**
- * Verifies a commitment proof.
- *
- * @param proof - The commitment proof to verify
- * @param publicSignals - Public signals associated with the proof
- * @returns Promise resolving to boolean indicating proof validity
- * @throws {ProofError} If verification fails
- */
-export const verifyRagequitProof = async ({ proof, publicSignals }: CommitmentProof) => {
-  const sdkInstance = initializeSDK();
-  return await sdkInstance.verifyCommitment({ proof, publicSignals });
 };
 
 /**
@@ -119,6 +88,10 @@ export const getContext = async (
   return computeContext(withdrawal, scope);
 };
 
+export const getMerkleProof = async (leaves: bigint[], leaf: bigint) => {
+  return generateMerkleProof(leaves, leaf);
+};
+
 export const relay = async ({
   poolInfo,
   withdraw,
@@ -136,18 +109,8 @@ export const relay = async ({
   return contract.relay(withdraw, proof, scope);
 };
 
-export const getScope = async (poolInfo: Pick<PoolInfo, 'entryPointAddress' | 'address'>, rpcProvider: RpcProvider) => {
-  const sdk = initializeSDK();
-  const contract = sdk.createSNContractInstance(poolInfo.entryPointAddress, rpcProvider);
-  return toAddress(await contract.getScope(poolInfo.address));
-};
-
 export const getDeposits = async (poolInfo: PoolInfo, dataService: StarknetDataService) => {
   return dataService.getDeposits(poolInfo as never);
-};
-
-export const getMerkleProof = async (leaves: bigint[], leaf: bigint) => {
-  return generateMerkleProof(leaves, leaf);
 };
 
 export const verifyWithdrawalProof = async (proof: Awaited<ReturnType<typeof generateWithdrawalProof>>) => {

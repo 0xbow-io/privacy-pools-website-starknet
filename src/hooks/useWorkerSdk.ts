@@ -9,6 +9,7 @@ import {
   CreateDepositSecretsCommand,
   CreateWithdrawSecretsCommand,
   FetchEventsCommand,
+  GetAssetConfigCommand,
   GetPoolsCompleteInfoCommand,
   LoadChainAccountsCommand,
   ProveDepositCommand,
@@ -186,6 +187,18 @@ export const useSdk = () => {
     [sendWorkerCommand, waitForSdkMessage],
   ) as never;
 
+  const getAssetConfig = useCallback(
+    async (payload: GetAssetConfigCommand['payload']) => {
+      const secrets = waitForSdkMessage('getAssetConfig');
+      sendWorkerCommand({
+        type: 'getAssetConfig',
+        payload,
+      });
+      return (await secrets).payload;
+    },
+    [sendWorkerCommand, waitForSdkMessage],
+  );
+
   return {
     withdraw,
     deposit,
@@ -198,5 +211,6 @@ export const useSdk = () => {
     addWithdrawal,
     createWithdrawalSecrets,
     fetchEvents,
+    getAssetConfig,
   };
 };
