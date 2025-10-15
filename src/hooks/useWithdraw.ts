@@ -12,33 +12,8 @@ import {
   useChainContext,
 } from '~/hooks';
 import { ModalType, Secret } from '~/types';
-import {
-  prepareWithdrawRequest,
-  getContext,
-  getMerkleProof,
-  verifyWithdrawalProof,
-  prepareWithdrawalProofInput,
-} from '~/utils';
+import { prepareWithdrawRequest, getContext, verifyWithdrawalProof, prepareWithdrawalProofInput } from '~/utils';
 import { useSdk } from './useWorkerSdk';
-
-const PRIVACY_POOL_ERRORS = {
-  'Error: InvalidProof()': 'Failed to verify withdrawal proof. Please regenerate your proof and try again.',
-  'Error: InvalidCommitment()':
-    'The commitment you are trying to spend does not exist. Please check your transaction history.',
-  'Error: InvalidProcessooor()': 'You are not authorized to perform this withdrawal operation.',
-  'Error: InvalidTreeDepth()':
-    'Invalid tree depth provided. Please refresh and try again, contact support if error persists.',
-  'Error: InvalidDepositValue()': 'The deposit amount is invalid. Maximum allowed value exceeded.',
-  'Error: ScopeMismatch()':
-    'Invalid scope provided for this privacy pool. Please refresh and try again, contact support if error persists.',
-  'Error: ContextMismatch()':
-    'Invalid context provided for this pool and withdrawal. Please refresh and try again, contact support if error persists.',
-  'Error: UnknownStateRoot()':
-    'The state root is unknown or outdated. Please refresh and try again, contact support if error persists.',
-  'Error: IncorrectASPRoot()':
-    'The ASP root is unknown or outdated. Please refresh and try again, contact support if error persists.',
-  'Error: OnlyOriginalDepositor()': 'Only the original depositor can ragequit from this commitment.',
-} as const;
 
 export const useWithdraw = () => {
   const { addNotification, getDefaultErrorMessage } = useNotifications();
@@ -47,7 +22,7 @@ export const useWithdraw = () => {
   const { chain } = useChainContext();
   const { setModalOpen, setIsClosable } = useModal();
   const { aspData, relayerData } = useExternalServices();
-  const { resetQuote, quoteState, markAsExpired } = useQuoteContext();
+  const { resetQuote, quoteState } = useQuoteContext();
   const {
     selectedPoolInfo,
     balanceBN: { decimals },
@@ -154,26 +129,6 @@ export const useWithdraw = () => {
   //   ],
   // );
 
-  const getPrivacyPoolErrorMessage = useCallback((errorMessage: string): string | null => {
-    // Check for exact matches first
-    for (const [contractError, userMessage] of Object.entries(PRIVACY_POOL_ERRORS)) {
-      if (errorMessage.includes(contractError)) {
-        return userMessage;
-      }
-    }
-
-    // Check for error function names without "Error:" prefix
-    const errorFunctionMatch = errorMessage.match(/(\w+)\(\)/);
-    if (errorFunctionMatch) {
-      const errorFunction = `Error: ${errorFunctionMatch[1]}()`;
-      if (errorFunction in PRIVACY_POOL_ERRORS) {
-        return PRIVACY_POOL_ERRORS[errorFunction as keyof typeof PRIVACY_POOL_ERRORS];
-      }
-    }
-
-    return null;
-  }, []);
-
   const generateProof = useCallback(
     async (
       onProgress?: (progress: {
@@ -190,9 +145,9 @@ export const useWithdraw = () => {
       ) => void,
     ) => {
       // Check for valid quote data immediately
-      // if (!feeBPSForWithdraw || feeBPSForWithdraw === 0n || !feeCommitment) {
-      //   throw new Error('No valid quote available. Please ensure you have a valid quote before withdrawing.');
-      // }
+      if (!feeBPSForWithdraw || feeBPSForWithdraw === 0n || !quoteState.quoteCommitment) {
+        throw new Error('No valid quote available. Please ensure you have a valid quote before withdrawing.');
+      }
 
       const relayerDetails = relayersData.find((r) => r.url === selectedRelayer?.url);
 
@@ -200,8 +155,8 @@ export const useWithdraw = () => {
       if (!poolAccount) missingFields.push('poolAccount');
       if (!target) missingFields.push('target');
       if (!commitment) missingFields.push('commitment');
-      // if (!aspLeaves) missingFields.push('aspLeaves');
-      // if (!stateLeaves) missingFields.push('stateLeaves');
+      if (!aspLeaves) missingFields.push('aspLeaves');
+      if (!stateLeaves) missingFields.push('stateLeaves');
       if (!relayerDetails) missingFields.push('relayerDetails');
       if (!relayerDetails?.relayerAddress) missingFields.push('relayerAddress');
       if (!feeBPSForWithdraw) missingFields.push('feeBPS');
@@ -215,18 +170,6 @@ export const useWithdraw = () => {
       const stateLeavesToUse = stateLeaves?.map(BigInt) || [];
       const relayerAddressToUse: `0x${string}` = relayerDetails?.relayerAddress as never;
       const feeBPSToUSe: string = feeBPSForWithdraw.toString();
-      // const deposits = await getDeposits(selectedPoolInfo);
-
-      // const aspRootHasBeenUpdated = new Promise<void>((resolve) => {
-      //   const labels = deposits.map((d) => d.label).join(' ');
-      //   console.log('Copy these labels, update the ASP Root and then call "rootHasBeenUpdated". Labels:');
-      //   console.log(labels);
-      //   (window as unknown as { rootHasBeenUpdated: () => void }).rootHasBeenUpdated = () => {
-      //     resolve();
-      //   };
-      // });
-
-      // await aspRootHasBeenUpdated;
 
       // TypeScript assertions - we've already validated these exist above
       if (!relayerDetails || !relayerDetails.relayerAddress) {
@@ -248,87 +191,76 @@ export const useWithdraw = () => {
         throw new Error('ASP leaves not available');
       }
 
-      let poolScope: StarknetAddress | undefined;
-      let stateMerkleProof: Awaited<ReturnType<typeof getMerkleProof>>;
-      let aspMerkleProof: Awaited<ReturnType<typeof getMerkleProof>>;
-      // let merkleProofGenerated = false;
+      const newWithdrawal = prepareWithdrawRequest(
+        target as `0x${string}`,
+        relayerAddressToUse,
+        feeBPSToUSe,
+        // feeBPSForWithdraw.toString(),
+        selectedPoolInfo,
+      );
 
-      try {
-        const newWithdrawal = prepareWithdrawRequest(
-          target as `0x${string}`,
-          relayerAddressToUse,
-          feeBPSToUSe,
-          // feeBPSForWithdraw.toString(),
-          selectedPoolInfo,
-        );
+      const poolScope = selectedPoolInfo.scope;
+      const stateMerkleProof = await Promise.resolve()
+        .then(() => generateMerkleProof(stateLeavesToUse, commitment.hash))
+        .catch((error) => {
+          throw new Error(
+            'Failed to generate the ZK proof because of invalid ASP Data. Please reload the page and try again. If the issue persists please contact support.',
+            { cause: error },
+          );
+        });
+      const aspMerkleProof = await Promise.resolve()
+        .then(() => generateMerkleProof(aspLeavesToUse, commitment.label))
+        .catch((error) => {
+          throw new Error(
+            'Failed to generate the ZK proof because of invalid ASP Data. Please reload the page and try again. If the issue persists please contact support.',
+            { cause: error },
+          );
+        });
+      const context = await getContext(newWithdrawal, poolScope);
+      const { secret, nullifier } = await createWithdrawalSecrets({ commitment, seed, chain });
+      aspMerkleProof.index = Object.is(aspMerkleProof.index, NaN) ? 0 : aspMerkleProof.index; // workaround for NaN index, SDK issue
 
-        poolScope = selectedPoolInfo.scope;
-        stateMerkleProof = generateMerkleProof(stateLeavesToUse, commitment.hash);
-        aspMerkleProof = generateMerkleProof(aspLeavesToUse, commitment.label);
-        const context = await getContext(newWithdrawal, poolScope);
-        const { secret, nullifier } = await createWithdrawalSecrets({ commitment, seed, chain });
+      const withdrawalProofInput = prepareWithdrawalProofInput(
+        parseUnits(amount, decimals),
+        stateMerkleProof,
+        aspMerkleProof,
+        BigInt(context),
+        secret,
+        nullifier,
+      );
 
-        aspMerkleProof.index = Object.is(aspMerkleProof.index, NaN) ? 0 : aspMerkleProof.index; // workaround for NaN index, SDK issue
+      const proof = await sdkWithdraw({ commitment, input: withdrawalProofInput });
 
-        const withdrawalProofInput = prepareWithdrawalProofInput(
-          parseUnits(amount, decimals),
-          stateMerkleProof,
-          aspMerkleProof,
-          BigInt(context),
-          secret,
-          nullifier,
-        );
-        // if (aspMerkleProof && stateMerkleProof) merkleProofGenerated = true;
+      const verified = await verifyWithdrawalProof(proof);
 
-        const proof = await sdkWithdraw({ commitment, input: withdrawalProofInput });
+      if (!verified) throw new Error('Proof verification failed');
+      setProof(proof as never);
+      setWithdrawal(newWithdrawal);
+      setNewSecretKeys({ secret, nullifier });
 
-        const verified = await verifyWithdrawalProof(proof);
-
-        if (!verified) throw new Error('Proof verification failed');
-
-        setProof(proof as never);
-        setWithdrawal(newWithdrawal);
-        setNewSecretKeys({ secret, nullifier });
-
-        if (onProgress) {
-          onProgress({ phase: 'verifying_proof', progress: 1.0 });
-        }
-
-        // Signal that proof generation is complete
-        if (onComplete) {
-          onComplete(proof, newWithdrawal, { secret, nullifier });
-        }
-
-        return proof;
-      } catch (err) {
-        const error = err as Error;
-
-        // Log proof generation error to Sentry
-        // logErrorToSentry(error, {
-        //   operation_step: 'proof_generation',
-        //   error_type: error?.name || 'unknown',
-        //   has_pool_scope: !!poolScope,
-        //   merkle_proof_generated: merkleProofGenerated,
-        //   proof_verified: false,
-        // });
-
-        const errorMessage = getDefaultErrorMessage(error?.message);
-        addNotification('error', errorMessage);
-        console.error('Error generating proof', error);
-        throw error;
+      if (onProgress) {
+        onProgress({ phase: 'verifying_proof', progress: 1.0 });
       }
+
+      // Signal that proof generation is complete
+      if (onComplete) {
+        onComplete(proof, newWithdrawal, { secret, nullifier });
+      }
+
+      return proof;
     },
     [
+      feeBPSForWithdraw,
+      quoteState.quoteCommitment,
       relayersData,
       poolAccount,
       target,
       commitment,
       aspLeaves,
       stateLeaves,
-      feeBPSForWithdraw,
-      selectedPoolInfo,
       seed,
       selectedRelayer?.url,
+      selectedPoolInfo,
       createWithdrawalSecrets,
       chain,
       amount,
@@ -337,8 +269,6 @@ export const useWithdraw = () => {
       setProof,
       setWithdrawal,
       setNewSecretKeys,
-      getDefaultErrorMessage,
-      addNotification,
     ],
   );
 
@@ -367,84 +297,61 @@ export const useWithdraw = () => {
 
       const scope = selectedPoolInfo.scope;
 
-      try {
-        setIsClosable(false);
-        setIsLoading(true);
+      setIsClosable(false);
+      setIsLoading(true);
 
-        // Reset the quote timer when transaction starts
-        resetQuote();
+      // Reset the quote timer when transaction starts
+      resetQuote();
 
-        const res = await relayerData.relay({
-          feeCommitment: quoteState.quoteCommitment!,
-          scope,
-          withdrawal: currentWithdrawal,
-          ...currentProof.withdrawalProof,
-        });
+      const res = await relayerData.relay({
+        feeCommitment: quoteState.quoteCommitment!,
+        scope,
+        withdrawal: currentWithdrawal,
+        ...currentProof.withdrawalProof,
+      });
 
-        const txHash = res.txHash as `0x${string}`;
+      const txHash = res.txHash as `0x${string}`;
 
-        const receipts = await fetchEvents({
-          rpcUrl: chain.rpcUrl,
-          params: {
-            event: 'Withdraw',
-            txHash,
-            poolInfo: selectedPoolInfo,
-          },
-        });
+      const receipts = await fetchEvents({
+        rpcUrl: chain.rpcUrl,
+        params: {
+          event: 'Withdraw',
+          txHash,
+          poolInfo: selectedPoolInfo,
+        },
+      });
 
-        if (!receipts.length) throw new Error('Receipt not found');
-        const [{ withdrawnValue, blockNumber }] = receipts;
+      if (!receipts.length)
+        throw new Error(
+          'Relayer transaction not found in time. This usually means that it is taking a little longer to process. Reload the page in some minutes and your withdrawal should be there. If not please contact support.',
+        );
+      const [{ withdrawnValue, blockNumber }] = receipts;
 
-        setTransactionHash(txHash);
-        setModalOpen(ModalType.PROCESSING);
+      setTransactionHash(txHash as StarknetAddress);
+      setModalOpen(ModalType.PROCESSING);
 
-        addWithdrawal({
-          parentCommitment: commitment,
-          value: poolAccount?.balance - withdrawnValue,
-          nullifier: (currentNewSecretKeys as { nullifier?: unknown })?.nullifier as Secret,
-          secret: (currentNewSecretKeys as { secret?: unknown })?.secret as Secret,
-          blockNumber: BigInt(blockNumber!),
-          txHash: txHash,
-        });
+      addWithdrawal({
+        parentCommitment: commitment,
+        value: poolAccount?.balance - withdrawnValue,
+        nullifier: (currentNewSecretKeys as { nullifier?: unknown })?.nullifier as Secret,
+        secret: (currentNewSecretKeys as { secret?: unknown })?.secret as Secret,
+        blockNumber: BigInt(blockNumber!),
+        txHash: txHash,
+      });
 
-        // Log successful withdrawal to Sentry for analytics
-        addBreadcrumb({
-          message: 'Withdrawal successful',
-          category: 'transaction',
-          data: {
-            transactionHash: txHash,
-            blockNumber: blockNumber?.toString(),
-            value: withdrawnValue.toString(),
-          },
-          level: 'info',
-        });
+      // Log successful withdrawal to Sentry for analytics
+      addBreadcrumb({
+        message: 'Withdrawal successful',
+        category: 'transaction',
+        data: {
+          transactionHash: txHash,
+          blockNumber: blockNumber?.toString(),
+          value: withdrawnValue.toString(),
+        },
+        level: 'info',
+      });
 
-        setModalOpen(ModalType.SUCCESS);
-      } catch (err) {
-        const error = err as Error;
-
-        // Log withdrawal error to Sentry with full context
-        // logErrorToSentry(error, {
-        //   operation_step: 'withdrawal_execution',
-        //   error_type: error?.name || 'unknown',
-        //   short_message: error?.shortMessage,
-        //   has_proof: !!currentProof,
-        //   has_withdrawal: !!currentWithdrawal,
-        //   has_new_secret_keys: !!currentNewSecretKeys,
-        //   pool_scope: poolScope?.toString(),
-        // });
-
-        // Try to get a user-friendly error message
-        const privacyPoolError = getPrivacyPoolErrorMessage(error?.message || '');
-        const errorMessage = privacyPoolError || getDefaultErrorMessage(error?.message);
-        setModalOpen(ModalType.NONE);
-        markAsExpired();
-
-        addNotification('error', errorMessage);
-        console.error('Error withdrawing', error);
-      }
-      setIsLoading(false);
-      setIsClosable(true);
+      setModalOpen(ModalType.SUCCESS);
     },
     [
       proof,
@@ -465,10 +372,6 @@ export const useWithdraw = () => {
       setModalOpen,
       addWithdrawal,
       poolAccount?.balance,
-      getPrivacyPoolErrorMessage,
-      getDefaultErrorMessage,
-      markAsExpired,
-      addNotification,
     ],
   );
 
@@ -484,12 +387,32 @@ export const useWithdraw = () => {
         await generateProof(onProgress, (proof, withdrawal, newSecretKeys) => {
           withdraw(proof, withdrawal, newSecretKeys);
         });
-      } catch (error) {
+      } catch (err) {
+        const error = err as Error;
+
+        // Log proof generation error to Sentry
+        // logErrorToSentry(error, {
+        //   operation_step: 'proof_generation',
+        //   error_type: error?.name || 'unknown',
+        //   has_pool_scope: !!poolScope,
+        //   merkle_proof_generated: merkleProofGenerated,
+        //   proof_verified: false,
+        // });
+
+        addNotification('error', getDefaultErrorMessage(error.message));
         console.error('❌ generateProofAndWithdraw failed:', error);
+        setModalOpen((currentModal) => {
+          setIsLoading(false);
+          setIsClosable(true);
+          if (currentModal === ModalType.GENERATE_ZK_PROOF) {
+            return ModalType.WITHDRAW;
+          }
+          return ModalType.NONE;
+        });
         throw error;
       }
     },
-    [generateProof, withdraw],
+    [addNotification, generateProof, getDefaultErrorMessage, setIsClosable, setModalOpen, withdraw],
   );
 
   return { withdraw, generateProof, generateProofAndWithdraw, isLoading };

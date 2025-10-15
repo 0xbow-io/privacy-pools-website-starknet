@@ -254,5 +254,20 @@ self.onmessage = async (event: MessageEvent<WorkerCommands>) => {
       });
       break;
     }
+    case 'getAssetConfig': {
+      const {
+        chain: { rpcUrl },
+        entryPoint,
+        assetAddress,
+      } = command.payload;
+      const contract = loadPoolContract(entryPoint, rpcUrl);
+      const payload = await contract.getAssetConfig(assetAddress);
+      sendResponse({
+        id,
+        type: 'getAssetConfig',
+        payload,
+      });
+      break;
+    }
   }
 };

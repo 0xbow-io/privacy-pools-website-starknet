@@ -4,9 +4,8 @@ import { createContext, useState, useEffect } from 'react';
 import { StarknetAddress } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { Uint256 } from 'starknet';
-import { Address, createPublicClient, getAddress, http } from 'viem';
-import { whitelistedChains } from '~/config';
 import { useChainContext } from '~/hooks';
+import { useSdk } from '~/hooks/useWorkerSdk';
 import {
   CommitmentProof,
   EventType,
@@ -17,7 +16,6 @@ import {
   WithdrawalProof,
   WithdrawalRelayerPayload,
 } from '~/types';
-import { assetConfig } from '~/utils';
 
 type Withdraw = Omit<WithdrawalRelayerPayload, 'data'> & {
   data: string[];
@@ -47,8 +45,8 @@ type ContextType = {
   setWithdrawal: (val: Withdraw) => void;
   newSecretKeys: { secret: bigint; nullifier: bigint } | null;
   setNewSecretKeys: (val: { secret: bigint; nullifier: bigint }) => void;
-  transactionHash: Address | undefined;
-  setTransactionHash: (val: Address) => void;
+  transactionHash: StarknetAddress | undefined;
+  setTransactionHash: (val: StarknetAddress) => void;
   actionType: EventType | undefined;
   setActionType: (val?: EventType) => void;
   feeCommitment: SignedFeeCommitment | null;
@@ -74,8 +72,10 @@ export const PoolAccountsProvider = ({ children }: Props) => {
     selectedPoolInfo,
   } = useChainContext();
 
+  const { getAssetConfig } = useSdk();
+
   const [actionType, setActionType] = useState<EventType>();
-  const [transactionHash, setTransactionHash] = useState<Address>();
+  const [transactionHash, setTransactionHash] = useState<StarknetAddress>();
 
   const [amount, setAmount] = useState<string>('');
   const [target, setTarget] = useState<StarknetAddress | ''>('');
@@ -116,24 +116,20 @@ export const PoolAccountsProvider = ({ children }: Props) => {
     queryKey: ['assetConfigs', chainId, selectedPoolInfo.scope.toString()],
     enabled: !!selectedPoolInfo,
     queryFn: async () => {
-      const publicClient = createPublicClient({
-        chain: whitelistedChains.find((chain) => chain.id.toString() === chainId) as never,
-        transport: http(rpcUrl),
-      });
-
-      const config = await publicClient.readContract({
-        address: getAddress(selectedPoolInfo.entryPointAddress),
-        abi: assetConfig,
-        functionName: 'assetConfig',
-        args: [selectedPoolInfo.assetAddress],
+      const config = await getAssetConfig({
+        chain: {
+          rpcUrl,
+        },
+        entryPoint: selectedPoolInfo.entryPointAddress,
+        assetAddress: selectedPoolInfo.assetAddress,
       });
 
       if (!config) return;
 
       return {
-        privacyPool: config[0],
-        minimumDepositAmount: config[1],
-        vettingFeeBPS: config[2],
+        privacyPool: config.pool,
+        minimumDepositAmount: config.minimumDepositAmount,
+        vettingFeeBPS: config.vettingFeeBPS,
       };
     },
   });

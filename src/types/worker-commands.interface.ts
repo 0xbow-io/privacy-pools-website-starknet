@@ -4,6 +4,7 @@ import {
   StarknetAddress,
   WithdrawalProofInput,
 } from '@fatsolutions/privacy-pools-core-starknet-sdk';
+import { AssetConfig } from 'node_modules/@fatsolutions/privacy-pools-core-starknet-sdk/dist/types/entrypoint';
 import { Call } from 'starknet';
 import { ChainData as ChainDictionary, CompletePoolInfo, PoolInfo } from '~/config';
 import {
@@ -148,6 +149,16 @@ export interface AddRagequitCommand {
 
 type AccountModificationCommands = AddPoolAccountCommand | AddWithdrawalCommand | AddRagequitCommand;
 
+export interface GetAssetConfigCommand {
+  type: 'getAssetConfig';
+  payload: ContractRetrievalData & { assetAddress: StarknetAddress };
+}
+
+export interface GetAssetConfigResponse {
+  type: 'getAssetConfig';
+  payload: AssetConfig;
+}
+
 export interface AddPoolAccountResponse {
   type: 'addPool';
   payload: ReturnType<typeof addPoolAccount>;
@@ -185,6 +196,7 @@ export type WorkerMessages = { id: string } & (
   | AccountModificationRespones
   | WithdrawalSecretsCreated
   | FetchEventsResponse
+  | GetAssetConfigResponse
 );
 
 export type WorkerCommands = {
@@ -199,6 +211,7 @@ export type WorkerCommands = {
   | AccountModificationCommands
   | CreateWithdrawSecretsCommand
   | FetchEventsCommand
+  | GetAssetConfigCommand
 );
 
 export type WorkerCommandsTypes = WorkerCommands['type'];
