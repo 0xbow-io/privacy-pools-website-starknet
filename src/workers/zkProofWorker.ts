@@ -137,7 +137,9 @@ self.onmessage = async (event: MessageEvent<WorkerCommands>) => {
     case 'fetchEvents': {
       const { rpcUrl, params } = command.payload;
       const dataService = loadDataService(rpcUrl);
-      const events = await waitForEvents({ ...params, dataService });
+      const events = await waitForEvents({ ...params, dataService }).catch(
+        () => [] as Awaited<ReturnType<typeof waitForEvents>>,
+      );
       sendResponse({
         type: 'fetchEvents',
         payload: events,
