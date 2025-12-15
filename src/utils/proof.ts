@@ -1,4 +1,4 @@
-import { serializeRelayData } from '@fatsolutions/privacy-pools-core-starknet-sdk';
+import { AuditorData, serializeRelayData, StarknetWithdrawal } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { Address } from '@starknet-react/chains';
 import { validateAndParseAddress } from 'starknet';
 import { PoolInfo } from '~/config';
@@ -10,6 +10,7 @@ export const prepareWithdrawRequest = (
   relayer: Address,
   feeBPS: string,
   poolInfo: Pick<PoolInfo, 'entryPointAddress'>,
+  auditorData?: AuditorData,
 ) => {
   const validatedRecipient = validateAndParseAddress(recipient);
 
@@ -20,8 +21,8 @@ export const prepareWithdrawRequest = (
       feeRecipient: relayer,
       relayFeeBPS: feeBPS,
     }),
-    // data: encodeWithdrawData(recipient, relayer, BigInt(feeBPS)),
-  };
+    auditorData,
+  } as const satisfies StarknetWithdrawal;
 };
 
 export const prepareWithdrawalProofInput = (

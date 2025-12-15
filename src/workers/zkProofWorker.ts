@@ -1,9 +1,9 @@
 import {
-  AccountService,
   StarknetDataService,
   SNContractInteractionsService,
   Hash,
   StarknetAddress,
+  StarknetAccountService,
 } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { Call, RpcProvider } from 'starknet';
 import { chainData, CompletePoolInfo, PoolInfo } from '~/config';
@@ -27,7 +27,7 @@ const sendResponse = <T extends WorkerMessages>(message: T) => {
   self.postMessage(message);
 };
 
-const chainAccountsMap = new Map<string, AccountService>();
+const chainAccountsMap = new Map<string, StarknetAccountService>();
 const poolContractsMap = new Map<string, SNContractInteractionsService>();
 const chainProviderMap = new Map<string, RpcProvider>();
 const chainDataServiceMap = new Map<string, StarknetDataService>();
@@ -54,7 +54,7 @@ const loadDataService = (rpcUrl: string, provider?: RpcProvider) => {
 
 const initAccountsService = (rpcUrl: string, seed: string) => {
   const dataService = loadDataService(rpcUrl);
-  const accountService = new AccountService(dataService as never, { mnemonic: seed });
+  const accountService = new StarknetAccountService(dataService, { mnemonic: seed });
   chainAccountsMap.set(rpcUrl + seed, accountService);
   return accountService;
 };
@@ -270,6 +270,21 @@ self.onmessage = async (event: MessageEvent<WorkerCommands>) => {
         payload,
       });
       break;
+    }
+    case 'generateAuditorData': {
+      const {
+        chain: { rpcUrl },
+        seed,
+        accountToAudit,
+        withdrawalValue,
+      } = command.payload;
+      const accountService = loadAccountsService(rpcUrl, seed);
+      const payload = accountService.createAuditorData(accountToAudit, withdrawalValue);
+      sendResponse({
+        id,
+        type: 'generateAuditorData',
+        payload,
+      });
     }
   }
 };

@@ -1,6 +1,8 @@
 import {
   AccountCommitment,
+  PoolAccount,
   PrivacyPoolStarknetSDK,
+  StarknetAccountService,
   StarknetAddress,
   WithdrawalProofInput,
 } from '@fatsolutions/privacy-pools-core-starknet-sdk';
@@ -154,6 +156,11 @@ export interface GetAssetConfigCommand {
   payload: ContractRetrievalData & { assetAddress: StarknetAddress };
 }
 
+export interface GenerateAuditorDatCommand {
+  type: 'generateAuditorData';
+  payload: AccountRetrievalData & { accountToAudit: PoolAccount; withdrawalValue?: bigint };
+}
+
 export interface GetAssetConfigResponse {
   type: 'getAssetConfig';
   payload: AssetConfig;
@@ -184,6 +191,11 @@ export interface FetchEventsResponse {
   payload: Awaited<ReturnType<typeof waitForEvents>>;
 }
 
+export interface GenerateAuditorDataResponse {
+  type: 'generateAuditorData';
+  payload: ReturnType<StarknetAccountService['createAuditorData']>;
+}
+
 type AccountModificationRespones = AddPoolAccountResponse | AddWithdrawalResponse | AddRagequitResponse;
 
 export type WorkerMessages = { id: string } & (
@@ -197,6 +209,7 @@ export type WorkerMessages = { id: string } & (
   | WithdrawalSecretsCreated
   | FetchEventsResponse
   | GetAssetConfigResponse
+  | GenerateAuditorDataResponse
 );
 
 export type WorkerCommands = {
@@ -212,6 +225,7 @@ export type WorkerCommands = {
   | CreateWithdrawSecretsCommand
   | FetchEventsCommand
   | GetAssetConfigCommand
+  | GenerateAuditorDatCommand
 );
 
 export type WorkerCommandsTypes = WorkerCommands['type'];

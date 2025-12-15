@@ -17,6 +17,7 @@ import {
   SNContractInteractionsService,
   StarknetDataService,
   generateMerkleProof,
+  StarknetWithdrawal,
 } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { AbiEventName } from '@fatsolutions/privacy-pools-core-starknet-sdk/data.service';
 import { RpcProvider } from 'starknet';
@@ -78,13 +79,7 @@ export const generateWithdrawalProof = async ({
   );
 };
 
-export const getContext = async (
-  withdrawal: {
-    processor: string;
-    data: string[];
-  },
-  scope: StarknetAddress,
-) => {
+export const getContext = async (withdrawal: StarknetWithdrawal, scope: StarknetAddress) => {
   return computeContext(withdrawal, scope);
 };
 
