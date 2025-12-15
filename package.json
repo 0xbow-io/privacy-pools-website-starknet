@@ -35,7 +35,7 @@
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
     "@emotion/styled": "11.14.0",
-    "@fatsolutions/privacy-pools-core-starknet-sdk": "^0.0.40",
+    "@fatsolutions/privacy-pools-core-starknet-sdk": "^0.0.42",
     "@fontsource/ibm-plex-mono": "5.1.0",
     "@mui/icons-material": "6.1.6",
     "@mui/material": "6.1.6",

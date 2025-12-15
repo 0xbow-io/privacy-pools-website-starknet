@@ -18,7 +18,7 @@ import { useSdk } from './useWorkerSdk';
 export const useWithdraw = () => {
   const { addNotification, getDefaultErrorMessage } = useNotifications();
   const [isLoading, setIsLoading] = useState(false);
-  const { withdraw: sdkWithdraw, createWithdrawalSecrets, fetchEvents } = useSdk();
+  const { withdraw: sdkWithdraw, fetchEvents, generateAuditorData } = useSdk();
   const { chain } = useChainContext();
   const { setModalOpen, setIsClosable } = useModal();
   const { aspData, relayerData } = useExternalServices();
@@ -191,12 +191,25 @@ export const useWithdraw = () => {
         throw new Error('ASP leaves not available');
       }
 
+      const parsedWithdrawalAmount = parseUnits(amount, decimals);
+
+      const {
+        auditorData,
+        withdrawalSecrets: { secret, nullifier },
+      } = await generateAuditorData({
+        accountToAudit: poolAccount!,
+        withdrawalValue: parsedWithdrawalAmount,
+        seed,
+        chain,
+      });
+
       const newWithdrawal = prepareWithdrawRequest(
         target as `0x${string}`,
         relayerAddressToUse,
         feeBPSToUSe,
         // feeBPSForWithdraw.toString(),
         selectedPoolInfo,
+        auditorData,
       );
 
       const poolScope = selectedPoolInfo.scope;
@@ -217,7 +230,6 @@ export const useWithdraw = () => {
           );
         });
       const context = await getContext(newWithdrawal, poolScope);
-      const { secret, nullifier } = await createWithdrawalSecrets({ commitment, seed, chain });
       aspMerkleProof.index = Object.is(aspMerkleProof.index, NaN) ? 0 : aspMerkleProof.index; // workaround for NaN index, SDK issue
 
       const withdrawalProofInput = prepareWithdrawalProofInput(
@@ -259,16 +271,16 @@ export const useWithdraw = () => {
       aspLeaves,
       stateLeaves,
       seed,
-      selectedRelayer?.url,
-      selectedPoolInfo,
-      createWithdrawalSecrets,
-      chain,
       amount,
       decimals,
+      generateAuditorData,
+      chain,
+      selectedPoolInfo,
       sdkWithdraw,
       setProof,
       setWithdrawal,
       setNewSecretKeys,
+      selectedRelayer?.url,
     ],
   );
 
