@@ -2,12 +2,14 @@
 
 import { MouseEvent, useRef, useState } from 'react';
 import Image from 'next/image';
-import { ListItemIcon, Menu as MuiMenu, MenuItem, styled, IconButton } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Box, ListItemIcon, Menu as MuiMenu, MenuItem, styled, IconButton } from '@mui/material';
 import { Chain } from '@starknet-react/chains';
 import { useNetwork } from '@starknet-react/core';
 import { chainData, whitelistedChains } from '~/config';
 import { useChainContext } from '~/hooks';
 import { zIndex } from '~/utils';
+import ethereumIcon from '~/assets/icons/ethereum.svg';
 
 export const ChainSelect = () => {
   const { chains } = useNetwork();
@@ -65,6 +67,30 @@ export const ChainSelect = () => {
             {chain.name}
           </SMenuItem>
         ))}
+
+        <MenuItem
+          component='a'
+          href='https://privacypools.com'
+          target='_blank'
+          rel='noopener noreferrer'
+          onClick={handleClose}
+          sx={{
+            padding: '1.6rem 0',
+            fontSize: '1.6rem',
+            fontWeight: 400,
+            lineHeight: 'normal',
+            textDecoration: 'none',
+            color: 'inherit',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+            <ListItemIcon sx={{ minWidth: 'unset' }}>
+              <Image src={ethereumIcon} alt='Ethereum' width={16} height={16} />
+            </ListItemIcon>
+            Ethereum
+            <OpenInNewIcon sx={{ fontSize: 14, ml: 'auto', opacity: 0.6 }} />
+          </Box>
+        </MenuItem>
       </SMenu>
     </>
   );
