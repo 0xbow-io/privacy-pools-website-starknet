@@ -37,7 +37,9 @@ describe('aspClient', () => {
 
       const result = await aspClient.fetchPoolInfo(ASP_ENDPOINT, chainId, scope);
 
-      expect(global.fetch).toHaveBeenCalledWith(`${ASP_ENDPOINT}/${chainId}/public/pool-info/${scope}`);
+      expect(global.fetch).toHaveBeenCalledWith(`${ASP_ENDPOINT}/${chainId}/public/pool-info`, {
+        headers: { 'X-Pool-Scope': scope },
+      });
       expect(result).toEqual(MOCK_POOL);
     });
 
@@ -60,7 +62,9 @@ describe('aspClient', () => {
 
       const result = await aspClient.fetchMtRoots(ASP_ENDPOINT, chainId, scope);
 
-      expect(global.fetch).toHaveBeenCalledWith(`${ASP_ENDPOINT}/${chainId}/public/mt-roots/${scope}`);
+      expect(global.fetch).toHaveBeenCalledWith(`${ASP_ENDPOINT}/${chainId}/public/mt-roots`, {
+        headers: { 'X-Pool-Scope': scope },
+      });
       expect(result).toEqual(MOCK_MT_ROOTS);
     });
 

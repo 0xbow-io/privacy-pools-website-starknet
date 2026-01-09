@@ -45,12 +45,17 @@ const aspClient = {
     }),
 
   fetchAllEvents: (aspUrl: string, chainId: string, scope: string, page = 1, perPage = ITEMS_PER_PAGE) =>
-    fetchPrivate<AllEventsResponse>(`${aspUrl}/${chainId}/private/events/${scope}?page=${page}&perPage=${perPage}`),
+    fetchPrivate<AllEventsResponse>(`${aspUrl}/${chainId}/private/events?page=${page}&perPage=${perPage}`, {
+      headers: {
+        [SCOPE_HEADER]: scope,
+      },
+    }),
 
   fetchDepositsByLabel: (aspUrl: string, chainId: string, scope: string, labels: string[]) =>
-    fetchPrivate<DepositsByLabelResponse>(`${aspUrl}/${chainId}/private/deposits/${scope}`, {
+    fetchPrivate<DepositsByLabelResponse>(`${aspUrl}/${chainId}/private/deposits`, {
       headers: {
-        'X-labels': labels.join(','),
+        [SCOPE_HEADER]: scope,
+        'X-Labels': labels.join(','),
       },
     }),
 
