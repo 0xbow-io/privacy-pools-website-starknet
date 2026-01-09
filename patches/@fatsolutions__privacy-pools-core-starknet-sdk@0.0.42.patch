@@ -1,0 +1,26 @@
+diff --git a/dist/abis/PrivacyPool.abi.js b/dist/abis/PrivacyPool.abi.js
+index 3cc5c7a9c38c277055e374b856b4f4a072ef7cb9..3d23bb7d79ad9258b567fa512410bf9aef063936 100644
+--- a/dist/abis/PrivacyPool.abi.js
++++ b/dist/abis/PrivacyPool.abi.js
+@@ -206,7 +206,7 @@ export const PrivacyPoolABI = [
+                 "inputs": [],
+                 "outputs": [
+                     {
+-                        "type": "core::integer::u256"
++                        "type": "core::felt252"
+                     }
+                 ],
+                 "state_mutability": "view"
+diff --git a/src/abis/PrivacyPool.abi.ts b/src/abis/PrivacyPool.abi.ts
+index 5810d7cd84c2d5b8d2d9cb7b5b7d001d7e5b6223..ec89bddc6f6364029997d1cca5ea044bab7b43d3 100644
+--- a/src/abis/PrivacyPool.abi.ts
++++ b/src/abis/PrivacyPool.abi.ts
+@@ -206,7 +206,7 @@ export const PrivacyPoolABI = [
+           "inputs": [],
+           "outputs": [
+             {
+-              "type": "core::integer::u256"
++              "type": "core::felt252"
+             }
+           ],
+           "state_mutability": "view"

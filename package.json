@@ -113,6 +113,9 @@
       "keccak",
       "sharp",
       "utf-8-validate"
-    ]
+    ],
+    "patchedDependencies": {
+      "@fatsolutions/privacy-pools-core-starknet-sdk@0.0.42": "patches/@fatsolutions__privacy-pools-core-starknet-sdk@0.0.42.patch"
+    }
   }
 }
