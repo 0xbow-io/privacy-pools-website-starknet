@@ -35,7 +35,7 @@
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
     "@emotion/styled": "11.14.0",
-    "@fatsolutions/privacy-pools-core-starknet-sdk": "^0.0.42",
+    "@fatsolutions/privacy-pools-core-starknet-sdk": "^0.0.45",
     "@fontsource/ibm-plex-mono": "5.1.0",
     "@mui/icons-material": "6.1.6",
     "@mui/material": "6.1.6",
@@ -54,7 +54,7 @@
     "react-dom": "19.1.1",
     "react-router-dom": "6.26.2",
     "require-in-the-middle": "^7.5.2",
-    "starknet": "^8.5.4",
+    "starknet": "^9.2.1",
     "viem": "2.23.5"
   },
   "devDependencies": {
@@ -115,7 +115,7 @@
       "utf-8-validate"
     ],
     "patchedDependencies": {
-      "@fatsolutions/privacy-pools-core-starknet-sdk@0.0.42": "patches/@fatsolutions__privacy-pools-core-starknet-sdk@0.0.42.patch"
+      "@fatsolutions/privacy-pools-core-starknet-sdk@0.0.45": "patches/@fatsolutions__privacy-pools-core-starknet-sdk@0.0.45.patch"
     }
   }
 }

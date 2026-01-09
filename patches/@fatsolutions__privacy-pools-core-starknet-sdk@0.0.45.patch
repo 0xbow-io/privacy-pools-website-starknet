@@ -1,0 +1,52 @@
+diff --git a/dist/abis/PrivacyPool.abi.js b/dist/abis/PrivacyPool.abi.js
+index cd10435bbebbe0dd5d646f1a09a3d57a3dd4d8b3..3d44c4fb705c1b1b85a8c693b575c6fecb5d11a5 100644
+--- a/dist/abis/PrivacyPool.abi.js
++++ b/dist/abis/PrivacyPool.abi.js
+@@ -459,16 +459,16 @@ export const PrivacyPoolABI = [
+                 "type": "core::starknet::contract_address::ContractAddress",
+                 "kind": "key",
+             },
+-            {
+-                "name": "label",
+-                "type": "core::felt252",
+-                "kind": "key",
+-            },
+             {
+                 "name": "commitment",
+                 "type": "core::integer::u256",
+                 "kind": "data",
+             },
++            {
++                "name": "label",
++                "type": "core::felt252",
++                "kind": "data",
++            },
+             {
+                 "name": "value",
+                 "type": "core::integer::u128",
+diff --git a/src/abis/PrivacyPool.abi.ts b/src/abis/PrivacyPool.abi.ts
+index 3abe384e0d74a1758ce127f51a865546df48a515..4ab0ec0ff44e26daa0e451d67ea129414c7f6956 100644
+--- a/src/abis/PrivacyPool.abi.ts
++++ b/src/abis/PrivacyPool.abi.ts
+@@ -459,16 +459,16 @@ export const PrivacyPoolABI = [
+         "type": "core::starknet::contract_address::ContractAddress",
+         "kind": "key",
+       },
+-      {
+-        "name": "label",
+-        "type": "core::felt252",
+-        "kind": "key",
+-      },
+       {
+         "name": "commitment",
+         "type": "core::integer::u256",
+         "kind": "data",
+       },
++      {
++        "name": "label",
++        "type": "core::felt252",
++        "kind": "data",
++      },
+       {
+         "name": "value",
+         "type": "core::integer::u128",
