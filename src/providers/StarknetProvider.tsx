@@ -20,10 +20,10 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
   const provider = jsonRpcProvider({
     rpc: (chain) => {
       if (chain.id === mainnet.id) {
-        return { nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_8/${ALCHEMY_KEY}` };
+        return { nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` };
       }
       if (chain.id === sepolia.id) {
-        return { nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/${ALCHEMY_KEY}` };
+        return { nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` };
       }
       return { nodeUrl: chain.rpcUrls.public.http[0] };
     },
