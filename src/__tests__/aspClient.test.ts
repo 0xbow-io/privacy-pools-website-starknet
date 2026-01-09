@@ -100,9 +100,9 @@ describe('aspClient', () => {
       // Second call should be to get the events with the token
       expect(global.fetch).toHaveBeenNthCalledWith(
         2,
-        `${ASP_ENDPOINT}/${chainId}/private/events/${scope}?page=1&perPage=${ITEMS_PER_PAGE}`,
+        `${ASP_ENDPOINT}/${chainId}/private/events?page=1&perPage=${ITEMS_PER_PAGE}`,
         {
-          headers: { Authorization: 'Bearer test-token' },
+          headers: { Authorization: 'Bearer test-token', 'X-Pool-Scope': scope },
         },
       );
 
