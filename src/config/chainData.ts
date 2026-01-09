@@ -66,7 +66,7 @@ const mainnetChainData: ChainData = {
     explorerUrl: mainnet.explorers.voyager.at(0)!,
     relayers: [{ name: 'Fast Relay', url: 'https://starknet-relayer-latest-149184580131.us-east1.run.app' }],
     sdkRpcUrl: `/api/hypersync-rpc?chainId=1`, // Secure Hypersync proxy (relative URL)
-    rpcUrl: `${mainnet.rpcUrls.alchemy.http[0]}/${ALCHEMY_KEY}` as const,
+    rpcUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` as const,
     aspUrl: ASP_ENDPOINT,
     poolInfo: [
       {
