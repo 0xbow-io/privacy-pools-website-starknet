@@ -223,7 +223,7 @@ export const WithdrawForm = () => {
     } finally {
       setIsLoadingMinAmount(false);
     }
-  }, [selectedPoolInfo?.assetAddress, selectedRelayer?.url, cacheKey, addNotification]);
+  }, [selectedPoolInfo.assetAddress, selectedRelayer?.url, cacheKey, addNotification]);
 
   // Fetch min amount when user starts entering amount or clicks max
   useEffect(() => {
