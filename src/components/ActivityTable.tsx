@@ -33,7 +33,7 @@ export const ActivityTable = ({
   const { setModalOpen } = useModal();
   const {
     balanceBN: { decimals, symbol },
-    selectedPoolInfo: { assetDecimals },
+    selectedPoolInfo,
   } = useChainContext();
   const { poolAccounts } = useAccountContext();
   const { setSelectedHistoryData } = usePoolAccountsContext();
@@ -49,7 +49,7 @@ export const ActivityTable = ({
   };
 
   const formatAmount = (row: ActivityRecords[number]) => {
-    return `${formatDataNumber(BigInt(getAmount(row) || 0), assetDecimals || decimals, 3, false, true, false)} ${symbol}`;
+    return `${formatDataNumber(BigInt(getAmount(row) || 0), selectedPoolInfo?.assetDecimals ?? decimals, 3, false, true, false)} ${symbol}`;
   };
 
   const formatTime = (row: ActivityRecords[number]) => {
@@ -104,7 +104,7 @@ export const ActivityTable = ({
                     <Tooltip
                       title={formatUnits(
                         getAmount(row as ActivityRecords[number]) as bigint,
-                        assetDecimals || decimals,
+                        selectedPoolInfo?.assetDecimals ?? decimals,
                       )}
                       placement='top'
                       disableInteractive

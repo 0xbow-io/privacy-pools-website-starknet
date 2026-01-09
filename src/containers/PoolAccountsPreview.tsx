@@ -15,7 +15,7 @@ export const PoolAccountsPreview = () => {
   const { push } = useRouter();
   const {
     balanceBN: { symbol, decimals },
-    selectedPoolInfo: { assetDecimals },
+    selectedPoolInfo,
   } = useChainContext();
   const {
     poolsByAssetAndChain,
@@ -108,7 +108,7 @@ export const PoolAccountsPreview = () => {
               <Stack width='50%' gap={1}>
                 <Subtitle variant='caption'>Available:</Subtitle>
                 <EthText variant='subtitle1' fontWeight='bold'>
-                  {formatUnits(amountPoolAsset, assetDecimals || decimals)}
+                  {formatUnits(amountPoolAsset, selectedPoolInfo?.assetDecimals ?? decimals)}
                   <span> {symbol}</span>
                 </EthText>
               </Stack>
