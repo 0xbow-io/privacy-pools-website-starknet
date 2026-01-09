@@ -24,6 +24,33 @@ index cd10435bbebbe0dd5d646f1a09a3d57a3dd4d8b3..3d44c4fb705c1b1b85a8c693b575c6fe
              {
                  "name": "value",
                  "type": "core::integer::u128",
+diff --git a/dist/utils.js b/dist/utils.js
+index 693b876ace2cd56a8d479155e280f39b348f41c9..59dd8b98b693b9d3b6042ff1ec9116a913f2eaf3 100644
+--- a/dist/utils.js
++++ b/dist/utils.js
+@@ -4,6 +4,8 @@ import { getGroth16CallData } from "./garaga.js";
+ import { snarkJsKeyIntoGaraga, snarkJsProofIntoGaraga } from "./types/conversions.js";
+ import { serializeWithdrawal } from "./types/entrypoint.js";
+ const { toBigInt } = num;
++// Starknet felt252 prime - values must be reduced modulo this
++const STARKNET_PRIME = 2n ** 251n + 17n * 2n ** 192n + 1n;
+ /**
+  * Computes a unique scope identifier for a privacy pool.
+  *
+@@ -63,7 +65,12 @@ export async function withdrawalProofToGaragaCalldata(withdrawalProof, vkeyRaw)
+     const vkeyGaraga = snarkJsKeyIntoGaraga(vkey);
+     const proofGaraga = snarkJsProofIntoGaraga(withdrawalProof.proof, withdrawalProof.publicSignals);
+     const calldata = await getGroth16CallData(proofGaraga, vkeyGaraga);
+-    return calldata.slice(1);
++    // Reduce all values modulo STARKNET_PRIME to ensure they fit in felt252
++    // This is needed because BN254 field elements can exceed Starknet's felt252 range
++    return calldata.slice(1).map(v => {
++        const val = BigInt(v);
++        return val >= STARKNET_PRIME ? val % STARKNET_PRIME : val;
++    });
+ }
+ /**
+  * Safely converts various numeric types to BigInt.
 diff --git a/src/abis/PrivacyPool.abi.ts b/src/abis/PrivacyPool.abi.ts
 index 3abe384e0d74a1758ce127f51a865546df48a515..4ab0ec0ff44e26daa0e451d67ea129414c7f6956 100644
 --- a/src/abis/PrivacyPool.abi.ts
@@ -50,3 +77,31 @@ index 3abe384e0d74a1758ce127f51a865546df48a515..4ab0ec0ff44e26daa0e451d67ea12941
        {
          "name": "value",
          "type": "core::integer::u128",
+diff --git a/src/utils.ts b/src/utils.ts
+index e895458ec73e398a2c637a45dc293b55eba944f8..48b74d7a8a20ff8ec888e48420a13a3c6eefcc8a 100644
+--- a/src/utils.ts
++++ b/src/utils.ts
+@@ -18,6 +18,9 @@ import { SnarkJsVkey } from "./types/snarkjs.js";
+ import { StarknetAddress } from "./types/starknet.js";
+ const { toBigInt } = num;
+ 
++// Starknet felt252 prime - values must be reduced modulo this
++const STARKNET_PRIME = 2n ** 251n + 17n * 2n ** 192n + 1n;
++
+ /**
+  * Computes a unique scope identifier for a privacy pool.
+  *
+@@ -80,7 +83,12 @@ export async function withdrawalProofToGaragaCalldata(withdrawalProof: Withdrawa
+   const vkeyGaraga = snarkJsKeyIntoGaraga(vkey);
+   const proofGaraga = snarkJsProofIntoGaraga(withdrawalProof.proof, withdrawalProof.publicSignals);
+   const calldata = await getGroth16CallData(proofGaraga, vkeyGaraga);
+-  return calldata.slice(1);
++  // Reduce all values modulo STARKNET_PRIME to ensure they fit in felt252
++  // This is needed because BN254 field elements can exceed Starknet's felt252 range
++  return calldata.slice(1).map(v => {
++    const val = BigInt(v);
++    return val >= STARKNET_PRIME ? val % STARKNET_PRIME : val;
++  });
+ }
+ 
+ /**
