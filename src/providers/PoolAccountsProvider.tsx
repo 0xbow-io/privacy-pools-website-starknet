@@ -106,16 +106,19 @@ export const PoolAccountsProvider = ({ children }: Props) => {
   };
 
   // Reset form inputs when asset/chain changes
+  // Reset form inputs when asset/chain changes
   useEffect(() => {
     setAmount('');
     setTarget('');
     setPoolAccount(undefined);
-  }, [selectedPoolInfo.assetAddress, selectedPoolInfo.chainId]);
+  }, [selectedPoolInfo?.assetAddress, selectedPoolInfo?.chainId]);
 
   const { data: assetConfigs, isLoading: isAssetConfigLoading } = useQuery({
-    queryKey: ['assetConfigs', chainId, selectedPoolInfo.scope.toString()],
+    queryKey: ['assetConfigs', chainId, selectedPoolInfo?.scope?.toString()],
     enabled: !!selectedPoolInfo,
     queryFn: async () => {
+      if (!selectedPoolInfo) return;
+
       const config = await getAssetConfig({
         chain: {
           rpcUrl,

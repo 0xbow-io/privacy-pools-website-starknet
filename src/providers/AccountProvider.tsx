@@ -69,12 +69,12 @@ export const AccountProvider = ({ children }: Props) => {
 
   // Sum of all the pool assets with the same scope
   const amountPoolAsset = poolAccounts
-    .filter((pa) => pa.scope === selectedPoolInfo.scope)
+    .filter((pa) => selectedPoolInfo?.scope && pa.scope === selectedPoolInfo.scope)
     .reduce((acc, curr) => acc + BigInt(curr.balance), BigInt(0));
 
   // Sum of all the pending pool assets with the same scope
   const pendingAmountPoolAsset = poolAccounts
-    .filter((pa) => pa.scope === selectedPoolInfo.scope)
+    .filter((pa) => selectedPoolInfo?.scope && pa.scope === selectedPoolInfo.scope)
     .reduce((acc, curr) => (curr.reviewStatus === ReviewStatus.PENDING ? acc + BigInt(curr.balance) : acc), BigInt(0));
 
   // Calculate the first approved account with a balance for the current scope
@@ -83,9 +83,10 @@ export const AccountProvider = ({ children }: Props) => {
       (account) =>
         account.reviewStatus === ReviewStatus.APPROVED &&
         account.balance !== 0n &&
+        selectedPoolInfo?.scope &&
         account.scope === selectedPoolInfo.scope,
     );
-  }, [poolAccounts, selectedPoolInfo.scope]);
+  }, [poolAccounts, selectedPoolInfo?.scope]);
 
   // Determine if there's any approved deposit
   const hasApprovedDeposit = useMemo(() => {
@@ -101,8 +102,9 @@ export const AccountProvider = ({ children }: Props) => {
   }, [firstApprovedAccount, poolAccount, setPoolAccount]);
 
   const poolsByAssetAndChain = useMemo(() => {
-    return poolAccountsByChainScope[`${selectedPoolInfo.chainId}-${selectedPoolInfo.scope}`];
-  }, [poolAccountsByChainScope, selectedPoolInfo.chainId, selectedPoolInfo.scope]);
+    if (!selectedPoolInfo?.chainId || !selectedPoolInfo?.scope) return [];
+    return poolAccountsByChainScope[`${selectedPoolInfo.chainId}-${selectedPoolInfo.scope}`] || [];
+  }, [poolAccountsByChainScope, selectedPoolInfo?.chainId, selectedPoolInfo?.scope]);
 
   // Updates the review status and timestamp of deposit entries in pool accounts based on deposit data from ASP
   const processDeposits = useCallback(
@@ -252,10 +254,12 @@ export const AccountProvider = ({ children }: Props) => {
   useEffect(() => {
     if (!accountServiceRef.current) return; // Not initialized yet
     if (
-      selectedPoolInfo.chainId === poolAccounts[0]?.chainId.toString() &&
-      selectedPoolInfo.scope === poolAccounts[0]?.scope
+      selectedPoolInfo?.chainId === poolAccounts[0]?.chainId.toString() &&
+      selectedPoolInfo?.scope === poolAccounts[0]?.scope
     )
       return;
+
+    if (!selectedPoolInfo?.chainId || !selectedPoolInfo?.scope) return;
 
     const newPoolAccounts = poolAccountsByChainScope[`${selectedPoolInfo.chainId}-${selectedPoolInfo.scope}`];
     if (!!newPoolAccounts) {
@@ -271,8 +275,8 @@ export const AccountProvider = ({ children }: Props) => {
       }
     }
   }, [
-    selectedPoolInfo.chainId,
-    selectedPoolInfo.scope,
+    selectedPoolInfo?.chainId,
+    selectedPoolInfo?.scope,
     poolAccounts,
     poolAccountsByChainScope,
     fetchAndProcessDeposits,
@@ -281,7 +285,7 @@ export const AccountProvider = ({ children }: Props) => {
 
   // Handle when ASP loading completes
   useEffect(() => {
-    if (!aspIsLoading && poolAccounts.length > 0 && accountServiceRef.current) {
+    if (!aspIsLoading && poolAccounts.length > 0 && accountServiceRef.current && selectedPoolInfo?.scope) {
       // Check if we have pool accounts for the current scope that need processing
       const currentScopeAccounts = poolAccounts.filter((pa) => pa.scope === selectedPoolInfo.scope);
       if (currentScopeAccounts.length > 0) {
@@ -289,7 +293,7 @@ export const AccountProvider = ({ children }: Props) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aspIsLoading, selectedPoolInfo.scope]);
+  }, [aspIsLoading, selectedPoolInfo?.scope]);
 
   useEffect(() => {
     if (aspError) {

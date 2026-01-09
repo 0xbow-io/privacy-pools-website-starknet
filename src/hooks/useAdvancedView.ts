@@ -28,8 +28,9 @@ export const useAdvancedView = () => {
   const currentPage = Number(searchParams.get('page') || 1);
 
   const allEventsByPageQuery = useQuery({
-    queryKey: ['asp_all_events_by_page', currentPage, chainId, selectedPoolInfo.scope.toString()],
-    queryFn: () => aspClient.fetchAllEvents(aspUrl, chainId, selectedPoolInfo.scope.toString(), currentPage),
+    queryKey: ['asp_all_events_by_page', currentPage, chainId, selectedPoolInfo?.scope?.toString()],
+    queryFn: () => aspClient.fetchAllEvents(aspUrl, chainId, selectedPoolInfo?.scope?.toString() || '', currentPage),
+    enabled: !!selectedPoolInfo?.scope,
     refetchInterval: 60000,
     retryOnMount: false,
   });
@@ -41,9 +42,9 @@ export const useAdvancedView = () => {
   const orderedPersonalActivity = useMemo(
     () =>
       historyData
-        .filter((account) => BigInt(account.scope) === BigInt(selectedPoolInfo.scope))
+        .filter((account) => selectedPoolInfo?.scope && BigInt(account.scope) === BigInt(selectedPoolInfo.scope))
         .sort((a, b) => b.timestamp - a.timestamp),
-    [historyData, selectedPoolInfo.scope],
+    [historyData, selectedPoolInfo?.scope],
   );
 
   // Filter pool accounts based on hideEmptyPools setting
@@ -57,9 +58,9 @@ export const useAdvancedView = () => {
   const orderedPoolAccounts = useMemo(
     () =>
       [...filteredPoolAccounts]
-        .filter((account) => BigInt(account.scope) === BigInt(selectedPoolInfo.scope))
+        .filter((account) => selectedPoolInfo?.scope && BigInt(account.scope) === BigInt(selectedPoolInfo.scope))
         .sort((a, b) => Number(b.deposit.timestamp || 0) - Number(a.deposit.timestamp || 0)),
-    [filteredPoolAccounts, selectedPoolInfo.scope],
+    [filteredPoolAccounts, selectedPoolInfo?.scope],
   );
 
   const fullPoolAccounts = useMemo(() => orderedPoolAccounts, [orderedPoolAccounts]);

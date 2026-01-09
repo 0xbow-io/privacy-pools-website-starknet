@@ -88,7 +88,7 @@ export const ChainProvider = ({ children }: Props) => {
   // User balance based on the selected asset
   const { data: userBalance } = useBalance({
     address,
-    token: selectedAsset === DEFAULT_ASSET ? undefined : selectedPoolInfo.assetAddress,
+    token: selectedAsset === DEFAULT_ASSET ? undefined : selectedPoolInfo?.assetAddress,
   });
 
   const balanceBN = useMemo(() => {
@@ -118,7 +118,7 @@ export const ChainProvider = ({ children }: Props) => {
 
   const feesQueries = useQueries({
     queries: chain.relayers.map((relayer) => ({
-      queryKey: ['fetchFees', relayer.url, selectedPoolInfo.assetAddress],
+      queryKey: ['fetchFees', relayer.url, selectedPoolInfo?.assetAddress],
       queryFn: () => {
         if (!selectedPoolInfo?.assetAddress) {
           return Promise.reject(new Error('Asset address not found for the selected pool'));

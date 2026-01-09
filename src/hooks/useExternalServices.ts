@@ -18,7 +18,7 @@ export const useExternalServices = () => {
 
   const relayerData = useRelayer();
 
-  const aspData = useASP(chainId, selectedPoolInfo.scope.toString(), aspUrl);
+  const aspData = useASP(chainId, selectedPoolInfo?.scope?.toString() || '', aspUrl);
 
   const isLoading = aspData.isLoading || relayerData.isQuoteLoading;
 
