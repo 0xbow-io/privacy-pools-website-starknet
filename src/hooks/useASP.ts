@@ -22,19 +22,24 @@ export const useASP = (
   ) => Promise<Record<string, DepositsByLabelResponse>>;
   refetchMtLeaves: () => Promise<QueryObserverResult<MtLeavesResponse, Error>>;
 } => {
+  const isEnabled = Boolean(chainId && scope && aspUrl);
+
   const poolInfoQuery = useQuery({
     queryKey: ['asp_pool_info', chainId, scope, aspUrl],
     queryFn: () => aspClient.fetchPoolInfo(aspUrl, chainId, scope),
+    enabled: isEnabled,
   });
 
   const mtRootQuery = useQuery({
     queryKey: ['asp_mt_root', chainId, scope, aspUrl],
     queryFn: () => aspClient.fetchMtRoots(aspUrl, chainId, scope),
+    enabled: isEnabled,
   });
 
   const mtLeavesQuery = useQuery({
     queryKey: ['asp_mt_leaves', chainId, scope, aspUrl],
     queryFn: () => aspClient.fetchMtLeaves(aspUrl, chainId, scope),
+    enabled: isEnabled,
   });
 
   const allEventsQuery = useQuery({
@@ -42,6 +47,7 @@ export const useASP = (
     queryFn: () => aspClient.fetchAllEvents(aspUrl, chainId, scope),
     refetchInterval: 60000,
     retryOnMount: false,
+    enabled: isEnabled,
   });
 
   const depositsByLabelQuery = useMutation({
