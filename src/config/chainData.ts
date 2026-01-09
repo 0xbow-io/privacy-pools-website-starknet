@@ -68,7 +68,19 @@ const mainnetChainData: ChainData = {
     sdkRpcUrl: `/api/hypersync-rpc?chainId=1`, // Secure Hypersync proxy (relative URL)
     rpcUrl: `${mainnet.rpcUrls.alchemy.http[0]}/${ALCHEMY_KEY}` as const,
     aspUrl: ASP_ENDPOINT,
-    poolInfo: [],
+    poolInfo: [
+      {
+        chainId: mainnet.id.toString(),
+        asset: 'ETH' as const,
+        assetAddress: toAddress('0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7'),
+        assetDecimals: 18,
+        address: toAddress('0x4c23dad7625d7f6007c4b2c3cc45d4bf1d9f3e6140a5e6c23fbd4794bb7d66a'),
+        scope: toAddress(649296599343591718526621241852873557126254989996419027592085248111321946147n),
+        entryPointAddress: toAddress('0xc47eede0a226cf1ad3f5a57777d61fa566a8d8acba5769353e649b070ebd8b'),
+        maxDeposit: parseEther('10'),
+        deploymentBlock: 5322540n,
+      },
+    ],
   },
 };
 

@@ -27,10 +27,12 @@ export const useAdvancedView = () => {
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page') || 1);
 
+  const scopeDecimal = selectedPoolInfo?.scope ? BigInt(selectedPoolInfo.scope).toString() : '';
+
   const allEventsByPageQuery = useQuery({
-    queryKey: ['asp_all_events_by_page', currentPage, chainId, selectedPoolInfo?.scope?.toString()],
-    queryFn: () => aspClient.fetchAllEvents(aspUrl, chainId, selectedPoolInfo?.scope?.toString() || '', currentPage),
-    enabled: !!selectedPoolInfo?.scope,
+    queryKey: ['asp_all_events_by_page', currentPage, chainId, scopeDecimal],
+    queryFn: () => aspClient.fetchAllEvents(aspUrl, chainId, scopeDecimal, currentPage),
+    enabled: !!scopeDecimal,
     refetchInterval: 60000,
     retryOnMount: false,
   });
