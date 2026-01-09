@@ -65,7 +65,7 @@ const mainnetChainData: ChainData = {
     image: mainnetIcon.src,
     explorerUrl: mainnet.explorers.voyager.at(0)!,
     relayers: [{ name: 'Fast Relay', url: 'https://starknet-relayer-latest-149184580131.us-east1.run.app' }],
-    sdkRpcUrl: `/api/hypersync-rpc?chainId=${mainnet.id.toString()}`, // Secure Hypersync proxy (relative URL)
+    sdkRpcUrl: `/api/alchemy-rpc?chainId=${mainnet.id.toString()}`, // Alchemy RPC proxy (relative URL)
     rpcUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` as const,
     aspUrl: ASP_ENDPOINT,
     poolInfo: [
@@ -92,7 +92,7 @@ const testnetChainData: ChainData = {
     decimals: sepolia.nativeCurrency.decimals,
     image: mainnetIcon.src,
     explorerUrl: sepolia.explorers.voyager.at(0)!,
-    sdkRpcUrl: `/api/hypersync-rpc?chainId=${sepolia.id.toString()}`, // Secure Hypersync proxy (relative URL)
+    sdkRpcUrl: `/api/alchemy-rpc?chainId=${sepolia.id.toString()}`, // Alchemy RPC proxy (relative URL)
     rpcUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` as const,
     aspUrl: ASP_ENDPOINT,
     relayers: [
