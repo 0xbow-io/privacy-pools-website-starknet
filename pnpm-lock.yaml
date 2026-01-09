@@ -12,7 +12,7 @@ overrides:
 
 patchedDependencies:
   '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.42':
-    hash: 9bc6c3c2e955bfc1690d29bb406e9aefc5a125fef2b93fe4abaf324cc0ce1e85
+    hash: 7f43aecf06c1821a28c4ea09b07d63b2ede890e5d3eca9fdb8a6b6fe796c5773
     path: patches/@fatsolutions__privacy-pools-core-starknet-sdk@0.0.42.patch
 
 importers:
@@ -36,7 +36,7 @@ importers:
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1)
       '@fatsolutions/privacy-pools-core-starknet-sdk':
         specifier: ^0.0.42
-        version: 0.0.42(patch_hash=9bc6c3c2e955bfc1690d29bb406e9aefc5a125fef2b93fe4abaf324cc0ce1e85)(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.0.42(patch_hash=7f43aecf06c1821a28c4ea09b07d63b2ede890e5d3eca9fdb8a6b6fe796c5773)(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@fontsource/ibm-plex-mono':
         specifier: 5.1.0
         version: 5.1.0
@@ -7829,7 +7829,7 @@ snapshots:
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
 
-  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.42(patch_hash=9bc6c3c2e955bfc1690d29bb406e9aefc5a125fef2b93fe4abaf324cc0ce1e85)(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
+  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.42(patch_hash=7f43aecf06c1821a28c4ea09b07d63b2ede890e5d3eca9fdb8a6b6fe796c5773)(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@0xbow/privacy-pools-core-sdk': 0.1.22(bufferutil@4.0.9)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@noble/ciphers': 2.1.1
