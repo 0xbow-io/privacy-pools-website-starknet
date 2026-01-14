@@ -155,7 +155,9 @@ export const AccountProvider = ({ children }: Props) => {
       const _poolAccounts = newPoolAccounts ?? poolAccounts;
       const labelsByScope: Record<string, string[]> = {};
       _poolAccounts.forEach(({ scope, label }) => {
-        labelsByScope[scope] = [...(labelsByScope[scope] || []), num.toHex(label)];
+        // Normalize scope to decimal string format (bigint as string)
+        const normalizedScope = scope.startsWith('0x') ? num.toBigInt(scope).toString() : scope;
+        labelsByScope[normalizedScope] = [...(labelsByScope[normalizedScope] || []), num.toHex(label)];
       });
 
       const depositsByScope = () =>

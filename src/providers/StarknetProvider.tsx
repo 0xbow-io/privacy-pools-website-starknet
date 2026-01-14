@@ -1,11 +1,8 @@
 'use client';
 import React from 'react';
-import { mainnet, sepolia } from '@starknet-react/chains';
 import { StarknetConfig, jsonRpcProvider, ready, braavos, useInjectedConnectors, voyager } from '@starknet-react/core';
 import { whitelistedChains } from '~/config';
-import { getEnv } from '~/config/env';
-
-const { ALCHEMY_KEY } = getEnv();
+import { getEnv } from '~/config/env.ts';
 
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
   const { connectors } = useInjectedConnectors({
@@ -15,17 +12,15 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
     includeRecommended: 'always',
   });
 
+  const { ALCHEMY_KEY } = getEnv();
+
   const chains = whitelistedChains;
 
   const provider = jsonRpcProvider({
-    rpc: (chain) => {
-      if (chain.id === mainnet.id) {
-        return { nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` };
-      }
-      if (chain.id === sepolia.id) {
-        return { nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` };
-      }
-      return { nodeUrl: chain.rpcUrls.public.http[0] };
+    rpc: () => {
+      return {
+        nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_9/${ALCHEMY_KEY}`,
+      };
     },
   });
 

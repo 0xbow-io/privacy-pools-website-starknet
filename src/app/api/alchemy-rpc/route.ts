@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
 
     // Map chainId to Alchemy endpoint
     const alchemyUrls: Record<string, string> = {
-      [mainnet.id.toString()]: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}`, // Mainnet
-      [sepolia.id.toString()]: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}`, // Sepolia
+      [mainnet.id.toString()]: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_9/${ALCHEMY_KEY}`, // Mainnet
+      [sepolia.id.toString()]: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_9/${ALCHEMY_KEY}`, // Sepolia
     };
 
     const alchemyUrl = alchemyUrls[chainId];
