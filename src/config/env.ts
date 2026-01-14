@@ -12,6 +12,9 @@ const env: Env = {
   // HYPERSYNC_KEY removed from client-side for security
   SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN as string,
   SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN as string,
+  RPC_URL: process.env.NEXT_PUBLIC_RPC_URL as string,
+  RPC_SPEC_VERSION: process.env.NEXT_PUBLIC_SPEC_VERSION as never,
+  RELAYER_URL: process.env.NEXT_PUBLIC_RELAYER_URL as string,
 };
 
 export const getServerEnv = () => {

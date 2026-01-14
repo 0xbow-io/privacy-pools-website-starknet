@@ -9,7 +9,7 @@ import { parseEther } from 'viem/utils';
 import { getEnv } from '~/config/env';
 // import daiIcon from '~/assets/icons/dai.svg';
 import mainnetIcon from '~/assets/icons/mainnet_color.svg';
-const { ALCHEMY_KEY, IS_TESTNET, ASP_ENDPOINT } = getEnv();
+const { ALCHEMY_KEY, IS_TESTNET, ASP_ENDPOINT, RPC_URL, RELAYER_URL } = getEnv();
 
 // Add chains to the whitelist to be used in the app
 const mainnetChains: readonly [Chain, ...Chain[]] = [mainnet];
@@ -64,18 +64,29 @@ const mainnetChainData: ChainData = {
     decimals: mainnet.nativeCurrency.decimals,
     image: mainnetIcon.src,
     explorerUrl: mainnet.explorers.voyager.at(0)!,
-    relayers: [{ name: 'Fast Relay', url: 'https://starknet-relayer-latest-149184580131.us-east1.run.app' }],
-    sdkRpcUrl: `/api/alchemy-rpc?chainId=${mainnet.id.toString()}`, // Alchemy RPC proxy (relative URL)
-    rpcUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_9/${ALCHEMY_KEY}` as const,
+    relayers: [{ name: 'Fast Relay', url: RELAYER_URL }],
+    sdkRpcUrl: `/api/hypersync-rpc?chainId=1`, // Secure Hypersync proxy (relative URL)
+    rpcUrl: `${RPC_URL}${ALCHEMY_KEY}` as const,
     aspUrl: ASP_ENDPOINT,
     poolInfo: [
+      {
+        chainId: mainnet.id.toString(),
+        asset: 'STRK' as const,
+        assetAddress: toAddress('0x04718f5a0Fc34cC1AF16A1cdee98fFB20C31f5cD61D6Ab07201858f4287c938D'),
+        assetDecimals: 18,
+        address: toAddress('0x2f35b62fff4fbf6188c758e5e1f92d98193ea179d42142746101660168a1d13'),
+        scope: toAddress(0x5fd162992faa7fb668cea2a0ef93e759af118755f74560622ba436d39d1704an),
+        entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
+        maxDeposit: parseEther('10'),
+        deploymentBlock: 5487678n,
+      },
       {
         chainId: mainnet.id.toString(),
         asset: 'ETH' as const,
         assetAddress: toAddress('0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7'),
         assetDecimals: 18,
         address: toAddress('0x1575a7d243bf929bea1eead2a33dfb25dad16df1af7a34f61caea22e4ec57fb'),
-        scope: toAddress(2800797958519586162627138001557086280944767729203868129890774676877347522280n),
+        scope: toAddress(0x631320a254ef817c906b00a00b386df59235e97d8fbb9d64eb499d5364a06e8n),
         entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
         maxDeposit: parseEther('10'),
         deploymentBlock: 5487709n,

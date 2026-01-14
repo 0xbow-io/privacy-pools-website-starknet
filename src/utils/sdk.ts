@@ -127,7 +127,7 @@ export const waitForEvents = async <T extends keyof typeof AbiEventName>({
   txHash,
   poolInfo,
   dataService,
-  maxRetries = 3,
+  maxRetries = 6,
 }: {
   event: T;
   txHash: string;

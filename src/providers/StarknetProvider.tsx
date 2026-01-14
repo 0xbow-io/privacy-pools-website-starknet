@@ -1,8 +1,8 @@
 'use client';
-import React from 'react';
-import { StarknetConfig, jsonRpcProvider, ready, braavos, useInjectedConnectors, voyager } from '@starknet-react/core';
+import React, { useRef } from 'react';
+import { StarknetConfig, ready, braavos, useInjectedConnectors, voyager, jsonRpcProvider } from '@starknet-react/core';
 import { whitelistedChains } from '~/config';
-import { getEnv } from '~/config/env.ts';
+import { getEnv } from '~/config/env';
 
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
   const { connectors } = useInjectedConnectors({
@@ -16,16 +16,22 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
 
   const chains = whitelistedChains;
 
-  const provider = jsonRpcProvider({
-    rpc: () => {
-      return {
-        nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_9/${ALCHEMY_KEY}`,
-      };
-    },
-  });
+  const alchemyProvider = useRef(
+    jsonRpcProvider({
+      rpc: () => ({
+        nodeUrl: `${getEnv().RPC_URL}${getEnv().ALCHEMY_KEY}`,
+        specVersion: getEnv().RPC_SPEC_VERSION,
+      }),
+    }),
+  );
 
   return (
-    <StarknetConfig chains={chains as never} provider={provider} connectors={connectors} explorer={voyager}>
+    <StarknetConfig
+      chains={chains as never}
+      provider={alchemyProvider.current}
+      connectors={connectors}
+      explorer={voyager}
+    >
       {children}
     </StarknetConfig>
   );
