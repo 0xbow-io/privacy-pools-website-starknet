@@ -12,8 +12,6 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
     includeRecommended: 'always',
   });
 
-  const { ALCHEMY_KEY } = getEnv();
-
   const chains = whitelistedChains;
 
   const alchemyProvider = useRef(
