@@ -10,11 +10,6 @@ overrides:
   '@babel/runtime@<7.26.10': '>=7.26.10'
   '@babel/helpers@<7.26.10': '>=7.26.10'
 
-patchedDependencies:
-  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.45':
-    hash: b4a5534e776557d04e8550de77fddbd8552c0969c6bd697657f0a2ded7ad2c61
-    path: patches/@fatsolutions__privacy-pools-core-starknet-sdk@0.0.45.patch
-
 importers:
 
   .:
@@ -6014,10 +6009,6 @@ packages:
   stacktrace-parser@0.1.11:
     resolution: {integrity: sha512-WjlahMgHmCJpqzU8bIBy4qtsZdU9lRlcZE3Lvyej6t4tuOuv1vk57OW3MBrj6hXBFx/nNoC9MPMTcr5YA7NQbg==}
     engines: {node: '>=6'}
-
-  starknet@9.2.1:
-    resolution: {integrity: sha512-bFJY2sMZ9tsLBhPCm719MWjoz+doabXIwPX/xtW56EHwAJMRAS6mICF6H2dCwOQHJmCMKpOSFBwW0SaiHzcioQ==}
-    engines: {node: '>=22'}
 
   starknet@9.2.1:
     resolution: {integrity: sha512-bFJY2sMZ9tsLBhPCm719MWjoz+doabXIwPX/xtW56EHwAJMRAS6mICF6H2dCwOQHJmCMKpOSFBwW0SaiHzcioQ==}
@@ -14269,23 +14260,6 @@ snapshots:
   stacktrace-parser@0.1.11:
     dependencies:
       type-fest: 0.7.1
-
-  starknet@9.2.1(typescript@5.6.2)(zod@3.25.76):
-    dependencies:
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.0
-      '@scure/base': 1.2.6
-      '@scure/starknet': 1.1.0
-      '@starknet-io/get-starknet-wallet-standard': 5.0.0(typescript@5.6.2)(zod@3.25.76)
-      '@starknet-io/starknet-types-010': '@starknet-io/types-js@0.10.0'
-      '@starknet-io/starknet-types-09': '@starknet-io/types-js@0.9.2'
-      abi-wan-kanabi: 2.2.4
-      lossless-json: 4.2.0
-      pako: 2.1.0
-      ts-mixer: 6.0.4
-    transitivePeerDependencies:
-      - typescript
-      - zod
 
   starknet@9.2.1(typescript@5.6.2)(zod@3.25.76):
     dependencies:
