@@ -113,7 +113,9 @@ export const AccountProvider = ({ children }: Props) => {
       if (!mtLeavesData?.aspLeaves) throw Error('ASP leaves not found');
 
       const updatedPoolAccounts = _poolAccounts.map((entry) => {
-        const deposit = deposits.find((d) => d.label === entry.label.toString());
+        // Normalize labels to hex format to avoid decimal/hex mismatch
+        const entryLabelHex = num.toHex(entry.label);
+        const deposit = deposits.find((d) => num.toHex(d.label) === entryLabelHex);
         if (!deposit) return entry;
 
         if (entry.reviewStatus === ReviewStatus.EXITED) {
@@ -124,7 +126,7 @@ export const AccountProvider = ({ children }: Props) => {
           };
         }
 
-        const aspLeaf = mtLeavesData.aspLeaves.find((leaf) => leaf.toString() === entry.label.toString());
+        const aspLeaf = mtLeavesData.aspLeaves.find((leaf) => num.toHex(leaf) === entryLabelHex);
         let reviewStatus = deposit.reviewStatus;
 
         // The deposit is approved but the leaves are not yet updated
