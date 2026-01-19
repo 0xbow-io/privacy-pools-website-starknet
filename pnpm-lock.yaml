@@ -30,8 +30,8 @@ importers:
         specifier: 11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1)
       '@fatsolutions/privacy-pools-core-starknet-sdk':
-        specifier: ^0.0.50
-        version: 0.0.50(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: ^0.0.51
+        version: 0.0.51(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@fontsource/ibm-plex-mono':
         specifier: 5.1.0
         version: 5.1.0
@@ -74,6 +74,12 @@ importers:
       next:
         specifier: 15.5.9
         version: 15.5.9(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      privacy-pools-core-starknet-sdk@0.0.51:
+        specifier: link:@@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51
+        version: link:@@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51
+      privacy-pools-core-starknet-sdk@latest:
+        specifier: link:@@fatsolutions/privacy-pools-core-starknet-sdk@latest
+        version: link:@@fatsolutions/privacy-pools-core-starknet-sdk@latest
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -987,8 +993,8 @@ packages:
   '@ethersproject/wordlists@5.8.0':
     resolution: {integrity: sha512-2df9bbXicZws2Sb5S6ET493uJ0Z84Fjr3pC4tu/qlnZERibZCeUVuqdtt+7Tv9xxhUxHoIekIA7avrKUWHrezg==}
 
-  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.50':
-    resolution: {integrity: sha512-ZSsNrKLMIrLLSyzmHs1oce3AScE1DSGvK3eTdcdl54UrJITmVVxTYfPFYKIIGOP8g0LlWvtQz0uWRva7KA7f6A==}
+  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51':
+    resolution: {integrity: sha512-0iaoMjrqN6D51448xSCLfAxpHLN+8hooVDqV6Y9UAJfN9I4eu7DsrfhRjClih7iQ0aITy/rTZbvonO7jY9R/aw==}
 
   '@fontsource/ibm-plex-mono@5.1.0':
     resolution: {integrity: sha512-XKsZNyRCj6tz8zlatHmniSoLVephMD5GQG2sXgcaEb8DkUO+O61r28uTlIMEZuoZXtP4c4STvL+KUlJM5jZOEg==}
@@ -7843,7 +7849,7 @@ snapshots:
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
 
-  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
+  '@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@0xbow/privacy-pools-core-sdk': 0.1.22(bufferutil@4.0.9)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@noble/ciphers': 2.1.1

@@ -122,6 +122,8 @@ export const createWithdrawalSecrets = (accountService: AccountService, commitme
   return accountService.createWithdrawalSecrets(commitment);
 };
 
+class TxNotFoundError extends Error {}
+
 export const waitForEvents = async <T extends keyof typeof AbiEventName>({
   event,
   txHash,
@@ -136,21 +138,26 @@ export const waitForEvents = async <T extends keyof typeof AbiEventName>({
   maxRetries?: number;
 }) => {
   const getTx = async () => {
-    const txEvents = await dataService.getTxEvents(
+    const txEvents = await dataService.getTxEventsWithNoAudits(
       AbiEventName[event],
       txHash,
       poolInfo as PoolInfo & { chainId: number; scope: Hash },
     );
     if (txEvents.length === 0) {
-      throw new Error(`Transaction for hash "${txHash}" not found in pool address "${poolInfo.address}".`);
+      throw new TxNotFoundError(`Transaction for hash "${txHash}" not found in pool address "${poolInfo.address}".`);
     }
     return txEvents;
   };
   let retry = 0;
-  let retryTime = 1000;
+  const retryTime = 2000;
   let tx: Awaited<ReturnType<typeof getTx>> & { blockNumber: bigint }[] = [];
   do {
-    tx = (await getTx().catch(() => delay((retryTime *= 2)).then(() => []))) as never;
+    tx = (await getTx().catch(async (error) => {
+      if (error instanceof TxNotFoundError) {
+        return delay(retryTime * retry + 1).then(() => []);
+      }
+      throw error;
+    })) as never;
   } while (tx.length === 0 && retry++ < maxRetries);
   return tx;
 };
