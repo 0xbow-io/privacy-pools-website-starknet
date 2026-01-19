@@ -36,11 +36,11 @@ export const useSdk = () => {
   }, []);
 
   const waitForSdkMessage = useCallback(
-    <T extends WorkerMessages, MessageType extends T['type']>(message: MessageType) => {
+    <T extends WorkerMessages, MessageType extends T['type']>(message: MessageType, timeoutMs?: number) => {
       if (!workerRef.current) {
         throw new Error('Worker not ready.');
       }
-      return waitForMessage<T, typeof message>(workerRef.current, message);
+      return waitForMessage<T, typeof message>(workerRef.current, message, timeoutMs);
     },
     [workerRef],
   );

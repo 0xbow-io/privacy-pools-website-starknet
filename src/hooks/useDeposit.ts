@@ -5,6 +5,7 @@ import { useAccount, useSendTransaction } from '@starknet-react/core';
 import { parseUnits } from 'viem/utils';
 import { useChainContext, useAccountContext, useNotifications, usePoolAccountsContext } from '~/hooks';
 import { Hash, ModalType, Secret } from '~/types';
+import { delay } from '~/utils/promises';
 import { useModal } from './useModal';
 import { useSdk } from './useWorkerSdk';
 
@@ -55,12 +56,14 @@ export const useDeposit = () => {
 
       setTransactionHash(transaction_hash as never);
 
+      await delay(3000);
+
       const deposits = await fetchEvents({
         params: {
           event: 'Deposit',
           txHash: transaction_hash,
           poolInfo: selectedPoolInfo,
-          maxRetries: 3,
+          maxRetries: 10,
         },
         rpcUrl: chain.rpcUrl,
       });
