@@ -74,12 +74,6 @@ importers:
       next:
         specifier: 15.5.9
         version: 15.5.9(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      privacy-pools-core-starknet-sdk@0.0.51:
-        specifier: link:@@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51
-        version: link:@@fatsolutions/privacy-pools-core-starknet-sdk@0.0.51
-      privacy-pools-core-starknet-sdk@latest:
-        specifier: link:@@fatsolutions/privacy-pools-core-starknet-sdk@latest
-        version: link:@@fatsolutions/privacy-pools-core-starknet-sdk@latest
       react:
         specifier: 19.1.1
         version: 19.1.1
