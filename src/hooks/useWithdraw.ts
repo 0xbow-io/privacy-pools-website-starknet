@@ -13,6 +13,7 @@ import {
 } from '~/hooks';
 import { ModalType, Secret } from '~/types';
 import { prepareWithdrawRequest, getContext, verifyWithdrawalProof, prepareWithdrawalProofInput } from '~/utils';
+import { delay } from '~/utils/promises';
 import { useSdk } from './useWorkerSdk';
 
 export const useWithdraw = () => {
@@ -323,6 +324,8 @@ export const useWithdraw = () => {
       });
 
       const txHash = res.txHash as `0x${string}`;
+
+      await delay(3000); // Give the node time to update its state
 
       const receipts = await fetchEvents({
         rpcUrl: chain.rpcUrl,
