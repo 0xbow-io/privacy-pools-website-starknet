@@ -38,7 +38,7 @@ export const useDeposit = () => {
         nullifier,
         secret,
         precommitment: precommitmentHash,
-      } = await createDepositSecrets({ chain, seed, scope });
+      } = await createDepositSecrets({ chain: { rpcUrl: chain.rpcUrl }, seed, scope });
       const value = parseUnits(amount, decimals);
 
       if (!scope || !precommitmentHash || !value) throw new Error('Missing required data to deposit');

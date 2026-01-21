@@ -37,7 +37,7 @@ const sdkInstance = initializeSDK();
 const loadProvider = (rpcUrl: string) => {
   let provider = chainProviderMap.get(rpcUrl);
   if (!provider) {
-    provider = new RpcProvider({ nodeUrl: rpcUrl });
+    provider = new RpcProvider({ nodeUrl: rpcUrl, specVersion: '0.10.0' });
     chainProviderMap.set(rpcUrl, provider);
   }
   return provider;
@@ -285,6 +285,22 @@ self.onmessage = async (event: MessageEvent<WorkerCommands>) => {
         type: 'generateAuditorData',
         payload,
       });
+      break;
+    }
+    case 'generateViewKeys': {
+      const {
+        chain: { rpcUrl },
+        seed,
+        accountToGenerateViewKeysFor,
+      } = command.payload;
+      const accountService = loadAccountsService(rpcUrl, seed);
+      const payload = accountService.deriveViewKey(accountToGenerateViewKeysFor);
+      sendResponse({
+        id,
+        type: 'generateViewKeys',
+        payload,
+      });
+      break;
     }
   }
 };

@@ -89,6 +89,7 @@ export const ChainProvider = ({ children }: Props) => {
   const { data: userBalance } = useBalance({
     address,
     token: selectedAsset === DEFAULT_ASSET ? undefined : selectedPoolInfo?.assetAddress,
+    refetchInterval: 30_000,
   });
 
   const balanceBN = useMemo(() => {

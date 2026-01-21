@@ -129,7 +129,7 @@ export const waitForEvents = async <T extends keyof typeof AbiEventName>({
   txHash,
   poolInfo,
   dataService,
-  maxRetries = 6,
+  maxRetries = 12,
 }: {
   event: T;
   txHash: string;
@@ -148,17 +148,43 @@ export const waitForEvents = async <T extends keyof typeof AbiEventName>({
     }
     return txEvents;
   };
+
+  // Wait for initial block confirmation on Starknet (~10-15 seconds typical block time)
+  console.log(`[waitForEvents] Waiting 10s for block confirmation before first attempt...`);
+  await delay(10000);
+
   let retry = 0;
-  const retryTime = 2000;
+  const retryTime = 3000;
   let tx: Awaited<ReturnType<typeof getTx>> & { blockNumber: bigint }[] = [];
-  do {
+
+  while (retry <= maxRetries) {
+    console.log(`[waitForEvents] Attempt ${retry + 1}/${maxRetries + 1} for tx ${txHash}`);
+
     tx = (await getTx().catch(async (error) => {
       if (error instanceof TxNotFoundError) {
-        return delay(retryTime * retry + 1).then(() => []);
+        console.log(`[waitForEvents] Tx not found, retry ${retry}/${maxRetries}`);
+        if (retry < maxRetries) {
+          const waitTime = retryTime * (retry + 1);
+          console.log(`[waitForEvents] Waiting ${waitTime}ms before retry...`);
+          await delay(waitTime);
+        }
+        return [];
       }
       throw error;
     })) as never;
-  } while (tx.length === 0 && retry++ < maxRetries);
+
+    if (tx.length > 0) {
+      console.log(`[waitForEvents] Found ${tx.length} event(s) on attempt ${retry + 1}`);
+      break;
+    }
+
+    retry++;
+  }
+
+  if (tx.length === 0) {
+    console.log(`[waitForEvents] Failed to find events after ${retry} attempts`);
+  }
+
   return tx;
 };
 

@@ -2,6 +2,7 @@ export enum EventType {
   DEPOSIT = 'deposit',
   WITHDRAWAL = 'withdrawal',
   EXIT = 'exit',
+  GENERATE_VIEW_KEYS = 'generateViewKeys',
 }
 
 export enum ReviewStatus {

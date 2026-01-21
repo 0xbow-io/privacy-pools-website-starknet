@@ -1,12 +1,13 @@
 'use client';
 
 import { createContext, SetStateAction, Dispatch, useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import { StarknetAccountService } from '@fatsolutions/privacy-pools-core-starknet-sdk';
 import { num } from 'starknet';
 import { ChainData } from '~/config';
 import { useChainContext, useExternalServices, useNotifications, usePoolAccountsContext } from '~/hooks';
 import { useAccountManager } from '~/hooks/useAccountManager';
 import { useSdk } from '~/hooks/useWorkerSdk';
-import { AccountService, DepositsByLabelResponse, EventType, PoolAccount, ReviewStatus, HistoryData } from '~/types';
+import { DepositsByLabelResponse, EventType, PoolAccount, ReviewStatus, HistoryData } from '~/types';
 import {
   AccountRetrievalData,
   AddPoolAccountCommand,
@@ -17,7 +18,7 @@ import {
 type ContextType = {
   seed: string | null;
   setSeed: Dispatch<SetStateAction<string | null>>;
-  accountService: AccountService | null;
+  accountService: StarknetAccountService | null;
 
   poolAccounts: PoolAccount[];
   poolAccountsByChainScope: Record<string, PoolAccount[]>; // chainId-scope -> poolAccounts
@@ -50,7 +51,7 @@ export const AccountContext = createContext({} as ContextType);
 
 export const AccountProvider = ({ children }: Props) => {
   const [seed, setSeed] = useState<string | null>(null);
-  const accountServiceRef = useRef<AccountService | null>(null);
+  const accountServiceRef = useRef<StarknetAccountService | null>(null);
   const [poolAccounts, setPoolAccounts] = useState<ContextType['poolAccounts']>([]);
   const [poolAccountsByChainScope, setPoolAccountsByChainScope] = useState<ContextType['poolAccountsByChainScope']>({});
   const [isLoading, setIsLoading] = useState(false);

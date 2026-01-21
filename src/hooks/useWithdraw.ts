@@ -201,7 +201,7 @@ export const useWithdraw = () => {
         accountToAudit: poolAccount!,
         withdrawalValue: parsedWithdrawalAmount,
         seed,
-        chain,
+        chain: { rpcUrl: chain.rpcUrl },
       });
 
       const newWithdrawal = prepareWithdrawRequest(

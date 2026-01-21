@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Commitment, MerkleProof, RagequitProof, Withdrawal, WithdrawalProof } from '~/types';
 
 export function generateMerkleProof(_leaves: bigint[], _leaf: bigint): MerkleProof {

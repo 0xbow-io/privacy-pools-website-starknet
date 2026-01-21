@@ -12,9 +12,8 @@ Sentry.init({
 
   // Add optional integrations for additional features
   integrations: [
-    // eslint-disable-next-line
     Sentry.replayIntegration(),
-    // eslint-disable-next-line
+
     Sentry.feedbackIntegration({
       // Additional SDK configuration goes in here, for example:
       colorScheme: 'system',
@@ -165,5 +164,4 @@ Sentry.init({
   },
 });
 
-// eslint-disable-next-line
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

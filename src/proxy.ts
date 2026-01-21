@@ -5,7 +5,7 @@ import { ROUTER } from '~/utils/router';
 const { COOKIES } = getConstants();
 const { USER_LOGGED, USER_CONNECTED } = COOKIES;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const userLogged = request.cookies.get(USER_LOGGED.name);
   const userConnected = request.cookies.get(USER_CONNECTED.name);
 

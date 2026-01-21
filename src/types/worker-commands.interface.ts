@@ -196,6 +196,16 @@ export interface GenerateAuditorDataResponse {
   payload: ReturnType<StarknetAccountService['createAuditorData']>;
 }
 
+export interface GenerateViewKeysCommand {
+  type: 'generateViewKeys';
+  payload: AccountRetrievalData & { accountToGenerateViewKeysFor: PoolAccount };
+}
+
+export interface GenerateViewKeysResponse {
+  type: 'generateViewKeys';
+  payload: string;
+}
+
 type AccountModificationRespones = AddPoolAccountResponse | AddWithdrawalResponse | AddRagequitResponse;
 
 export type WorkerMessages = { id: string } & (
@@ -210,6 +220,7 @@ export type WorkerMessages = { id: string } & (
   | FetchEventsResponse
   | GetAssetConfigResponse
   | GenerateAuditorDataResponse
+  | GenerateViewKeysResponse
 );
 
 export type WorkerCommands = {
@@ -226,6 +237,7 @@ export type WorkerCommands = {
   | FetchEventsCommand
   | GetAssetConfigCommand
   | GenerateAuditorDatCommand
+  | GenerateViewKeysCommand
 );
 
 export type WorkerCommandsTypes = WorkerCommands['type'];

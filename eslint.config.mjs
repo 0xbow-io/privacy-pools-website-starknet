@@ -1,36 +1,54 @@
 import { fixupPluginRules } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
-import prettierConfig from 'eslint-config-prettier';
-import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import typescriptParser from '@typescript-eslint/parser';
+import importPlugin from 'eslint-plugin-import';
 import prettierPlugin from 'eslint-plugin-prettier';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 const eslintConfig = [
-  ...compat.extends(
-    'prettier',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'next/core-web-vitals',
-    'next/typescript',
-  ),
   {
+    ignores: [
+      '**/node_modules/**',
+      '**/.next/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.turbo/**',
+      '**/coverage/**',
+    ],
+  },
+  {
+    files: ['**/*.{js,jsx,ts,tsx,mjs}'],
     plugins: {
+      '@typescript-eslint': fixupPluginRules(typescriptEslint),
+      'react-hooks': fixupPluginRules(reactHooksPlugin),
       prettier: fixupPluginRules(prettierPlugin),
+      import: fixupPluginRules(importPlugin),
     },
 
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
     rules: {
+      // React Hooks rules
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // TypeScript rules
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-empty-interface': 'off',
+
+      // Import order rules
       'import/order': [
         'error',
         {
@@ -72,18 +90,15 @@ const eslintConfig = [
         },
       ],
       // Prettier plugin to apply formatting rules
-      'prettier/prettier': 'error', // This tells ESLint to show Prettier errors as ESLint errors
-      '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/no-empty-interface': 'off',
+      'prettier/prettier': 'error',
     },
     settings: {
-      // Spread Prettier config to disable conflicting ESLint rules
-      ...prettierConfig,
-      'import/resolver-next': [
-        createTypeScriptImportResolver({
-          alwaysTryTypes: true, // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
-        }),
-      ],
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+        },
+        node: true,
+      },
     },
   },
 ];

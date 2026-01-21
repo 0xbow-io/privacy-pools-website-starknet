@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -11,7 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -27,9 +31,21 @@
     "baseUrl": ".",
     "types": [],
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": [
+        "src/*"
+      ]
     }
   },
-  "include": ["./dist/types/**/*.ts", "./jest.config.ts", "./next-env.d.ts", "./src", ".next/types/**/*.ts"],
-  "exclude": ["./node_modules", "cypress/**/*"]
+  "include": [
+    "./dist/types/**/*.ts",
+    "./jest.config.ts",
+    "./next-env.d.ts",
+    "./src",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules",
+    "cypress/**/*"
+  ]
 }

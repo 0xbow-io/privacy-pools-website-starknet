@@ -1,6 +1,7 @@
 import { ActivityDetails } from './ActivityDetails';
 import { ConnectModal } from './Connect';
 import { DepositModal } from './Deposit';
+import { GenerateViewKeysModal } from './GenerateViewKeys';
 import { GeneratingModal } from './GeneratingZkProof';
 import { PoolDetails } from './PoolDetails';
 import { ProcessingwModal } from './Processing';
@@ -20,6 +21,7 @@ export const Modals = () => {
       <SuccessModal />
       <GeneratingModal />
       <ConnectModal />
+      <GenerateViewKeysModal />
     </>
   );
 };

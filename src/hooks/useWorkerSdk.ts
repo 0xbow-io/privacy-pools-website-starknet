@@ -10,6 +10,7 @@ import {
   CreateWithdrawSecretsCommand,
   FetchEventsCommand,
   GenerateAuditorDatCommand,
+  GenerateViewKeysCommand,
   GetAssetConfigCommand,
   GetPoolsCompleteInfoCommand,
   LoadChainAccountsCommand,
@@ -190,7 +191,7 @@ export const useSdk = () => {
     params: FetchEventsCommand['payload'] & { params: { event: Event } },
   ) => ReturnType<typeof waitForEvents<Event>> = useCallback(
     async (payload: FetchEventsCommand['payload']) => {
-      const secrets = waitForSdkMessage('fetchEvents');
+      const secrets = waitForSdkMessage('fetchEvents', 60000);
       sendWorkerCommand({
         type: 'fetchEvents',
         payload,
@@ -212,6 +213,18 @@ export const useSdk = () => {
     [sendWorkerCommand, waitForSdkMessage],
   );
 
+  const generateViewKeys = useCallback(
+    async (payload: GenerateViewKeysCommand['payload']) => {
+      const viewKey = waitForSdkMessage('generateViewKeys');
+      sendWorkerCommand({
+        type: 'generateViewKeys',
+        payload,
+      });
+      return (await viewKey).payload;
+    },
+    [sendWorkerCommand, waitForSdkMessage],
+  );
+
   return {
     withdraw,
     deposit,
@@ -226,5 +239,6 @@ export const useSdk = () => {
     fetchEvents,
     getAssetConfig,
     generateAuditorData,
+    generateViewKeys,
   };
 };

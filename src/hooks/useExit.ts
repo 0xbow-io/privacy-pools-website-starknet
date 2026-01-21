@@ -35,7 +35,7 @@ export const useExit = () => {
         nullifier,
         secret,
         value,
-        chain,
+        chain: { rpcUrl: chain.rpcUrl },
       });
 
       const hash = (await sendAsync([rageQuitCall])).transaction_hash as `0x${string}`;
