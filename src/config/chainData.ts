@@ -10,6 +10,8 @@ import { getEnv } from '~/config/env';
 // import daiIcon from '~/assets/icons/dai.svg';
 import ethereumIcon from '~/assets/icons/ethereum.svg';
 import starknetIcon from '~/assets/icons/starknet.svg';
+import usdcIcon from '~/assets/icons/usdc.svg';
+
 const { ALCHEMY_KEY, IS_TESTNET, ASP_ENDPOINT, RPC_URL, RELAYER_URL } = getEnv();
 
 // Add chains to the whitelist to be used in the app
@@ -78,7 +80,7 @@ const mainnetChainData: ChainData = {
         address: toAddress('0x2f35b62fff4fbf6188c758e5e1f92d98193ea179d42142746101660168a1d13'),
         scope: toAddress(0x5fd162992faa7fb668cea2a0ef93e759af118755f74560622ba436d39d1704an),
         entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
-        maxDeposit: parseEther('1000000'),
+        maxDeposit: parseEther('100000000'),
         deploymentBlock: 5487678n,
         icon: starknetIcon.src,
       },
@@ -93,6 +95,19 @@ const mainnetChainData: ChainData = {
         maxDeposit: parseEther('10'),
         deploymentBlock: 5487709n,
         icon: ethereumIcon.src,
+      },
+      {
+        chainId: mainnet.id.toString(),
+        asset: 'USDC' as const,
+        assetAddress: toAddress('0x053C91253BC9682c04929cA02ED00b3E423f6710D2ee7e0D5EBB06F3eCF368A8'),
+        assetDecimals: 6,
+        isStableAsset: true,
+        address: toAddress('0x78d8a02f3a7073dfd6c7a4ea3e15ba217a3196ecf6487b09a03800d69092879'),
+        scope: toAddress(0x21c2e26e3487250993ba2820d942e28dd139d76078663e3e0c3c2c07c3703c6n),
+        entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
+        maxDeposit: parseEther('1000000'),
+        deploymentBlock: 5903944n,
+        icon: usdcIcon.src,
       },
     ],
   },
