@@ -8,6 +8,7 @@ import {
 import { parseEther } from 'viem/utils';
 import { getEnv } from '~/config/env';
 // import daiIcon from '~/assets/icons/dai.svg';
+import ethereumIcon from '~/assets/icons/ethereum.svg';
 import starknetIcon from '~/assets/icons/starknet.svg';
 const { ALCHEMY_KEY, IS_TESTNET, ASP_ENDPOINT, RPC_URL, RELAYER_URL } = getEnv();
 
@@ -79,6 +80,7 @@ const mainnetChainData: ChainData = {
         entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
         maxDeposit: parseEther('1000000'),
         deploymentBlock: 5487678n,
+        icon: starknetIcon.src,
       },
       {
         chainId: mainnet.id.toString(),
@@ -90,6 +92,7 @@ const mainnetChainData: ChainData = {
         entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
         maxDeposit: parseEther('10'),
         deploymentBlock: 5487709n,
+        icon: ethereumIcon.src,
       },
     ],
   },
@@ -121,6 +124,7 @@ const testnetChainData: ChainData = {
         entryPointAddress: toAddress('0x6fe3b0c2d8b16dcb3aa50d97d63b6a149be8c96cdd0b451497be3d0a95b50e'),
         maxDeposit: parseEther('10'),
         deploymentBlock: 2296635n,
+        icon: ethereumIcon.src,
       },
       {
         chainId: sepolia.id.toString(),
@@ -132,6 +136,7 @@ const testnetChainData: ChainData = {
         entryPointAddress: toAddress('0x6fe3b0c2d8b16dcb3aa50d97d63b6a149be8c96cdd0b451497be3d0a95b50e'),
         maxDeposit: parseEther('10'),
         deploymentBlock: 2299735n,
+        icon: starknetIcon.src,
       },
     ],
   },
