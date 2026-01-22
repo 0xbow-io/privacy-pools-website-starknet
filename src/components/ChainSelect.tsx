@@ -9,7 +9,7 @@ import { useNetwork } from '@starknet-react/core';
 import { chainData, whitelistedChains } from '~/config';
 import { useChainContext } from '~/hooks';
 import { zIndex } from '~/utils';
-import starknetIcon from '~/assets/icons/starknet.svg';
+import ethereumIcon from '~/assets/icons/ethereum.svg';
 
 export const ChainSelect = () => {
   const { chains } = useNetwork();
@@ -85,9 +85,9 @@ export const ChainSelect = () => {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
             <ListItemIcon sx={{ minWidth: 'unset' }}>
-              <Image src={starknetIcon} alt='Starknet' width={16} height={16} />
+              <Image src={ethereumIcon} alt='Ethereum' width={16} height={16} />
             </ListItemIcon>
-            Starknet
+            Ethereum
             <OpenInNewIcon sx={{ fontSize: 14, ml: 'auto', opacity: 0.6 }} />
           </Box>
         </MenuItem>
