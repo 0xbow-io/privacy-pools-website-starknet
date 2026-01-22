@@ -8,7 +8,7 @@ import {
 import { parseEther } from 'viem/utils';
 import { getEnv } from '~/config/env';
 // import daiIcon from '~/assets/icons/dai.svg';
-import mainnetIcon from '~/assets/icons/mainnet_color.svg';
+import starknetIcon from '~/assets/icons/starknet.svg';
 const { ALCHEMY_KEY, IS_TESTNET, ASP_ENDPOINT, RPC_URL, RELAYER_URL } = getEnv();
 
 // Add chains to the whitelist to be used in the app
@@ -62,7 +62,7 @@ const mainnetChainData: ChainData = {
     name: mainnet.name,
     symbol: mainnet.nativeCurrency.symbol,
     decimals: mainnet.nativeCurrency.decimals,
-    image: mainnetIcon.src,
+    image: starknetIcon.src,
     explorerUrl: mainnet.explorers.voyager.at(0)!,
     relayers: [{ name: 'Fast Relay', url: RELAYER_URL }],
     sdkRpcUrl: `/api/hypersync-rpc?chainId=1`, // Secure Hypersync proxy (relative URL)
@@ -101,7 +101,7 @@ const testnetChainData: ChainData = {
     name: sepolia.name,
     symbol: sepolia.nativeCurrency.symbol,
     decimals: sepolia.nativeCurrency.decimals,
-    image: mainnetIcon.src,
+    image: starknetIcon.src,
     explorerUrl: sepolia.explorers.voyager.at(0)!,
     sdkRpcUrl: `/api/alchemy-rpc?chainId=${sepolia.id.toString()}`, // Alchemy RPC proxy (relative URL)
     rpcUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/${ALCHEMY_KEY}` as const,
@@ -139,7 +139,7 @@ const testnetChainData: ChainData = {
   //   name: devnet.name,
   //   symbol: devnet.nativeCurrency.symbol,
   //   decimals: devnet.nativeCurrency.decimals,
-  //   image: mainnetIcon.src,
+  //   image: starknetIcon.src,
   //   explorerUrl: '',
   //   sdkRpcUrl: `/api/hypersync-rpc?chainId=${devnet.id.toString()}`, // Secure Hypersync proxy (relative URL)
   //   rpcUrl: `http://localhost:5050/rpc` as const,
