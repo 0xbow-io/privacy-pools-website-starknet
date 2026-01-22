@@ -68,19 +68,13 @@ export const ChainSelect = () => {
           </SMenuItem>
         ))}
 
-        <SMenuItem
-          {...({ component: 'a' } as any)}
-          href='https://privacypools.com'
-          target='_blank'
-          rel='noopener noreferrer'
-          onClick={handleClose}
-        >
+        <SMenuItemLink href='https://privacypools.com' target='_blank' rel='noopener noreferrer' onClick={handleClose}>
           <ListItemIcon>
             <Image src={ethereumIcon} alt='Ethereum' width={16} height={16} />
           </ListItemIcon>
           Ethereum
           <OpenInNewIcon sx={{ fontSize: 14, ml: 'auto', opacity: 0.6 }} />
-        </SMenuItem>
+        </SMenuItemLink>
       </SMenu>
     </>
   );
@@ -137,7 +131,7 @@ const SMenu = styled(MuiMenu)(({ theme }) => {
   };
 });
 
-const SMenuItem = styled(MenuItem)<{ component?: React.ElementType }>(() => ({
+const SMenuItem = styled(MenuItem)(() => ({
   padding: '1.6rem 0',
   fontSize: '1.6rem',
   fontWeight: 400,
@@ -145,5 +139,20 @@ const SMenuItem = styled(MenuItem)<{ component?: React.ElementType }>(() => ({
 
   '.copy-icon': {
     marginLeft: 'auto',
+  },
+}));
+
+const SMenuItemLink = styled('a')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '1.6rem 0',
+  fontSize: '1.6rem',
+  fontWeight: 400,
+  lineHeight: 'normal',
+  textDecoration: 'none',
+  color: theme.palette.text.primary,
+  cursor: 'pointer',
+  '&:hover': {
+    backgroundColor: 'transparent',
   },
 }));
