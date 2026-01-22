@@ -69,7 +69,7 @@ export const ChainSelect = () => {
         ))}
 
         <SMenuItem
-          component='a'
+          {...({ component: 'a' } as any)}
           href='https://privacypools.com'
           target='_blank'
           rel='noopener noreferrer'
@@ -137,7 +137,7 @@ const SMenu = styled(MuiMenu)(({ theme }) => {
   };
 });
 
-const SMenuItem = styled(MenuItem)(() => ({
+const SMenuItem = styled(MenuItem)<{ component?: React.ElementType }>(() => ({
   padding: '1.6rem 0',
   fontSize: '1.6rem',
   fontWeight: 400,
