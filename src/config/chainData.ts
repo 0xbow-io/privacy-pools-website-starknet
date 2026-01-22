@@ -77,7 +77,7 @@ const mainnetChainData: ChainData = {
         address: toAddress('0x2f35b62fff4fbf6188c758e5e1f92d98193ea179d42142746101660168a1d13'),
         scope: toAddress(0x5fd162992faa7fb668cea2a0ef93e759af118755f74560622ba436d39d1704an),
         entryPointAddress: toAddress('0x13a0314dd07c6639921bd0e7eb8c865b28b3c7a413238baf804de3464d428dd'),
-        maxDeposit: parseEther('10'),
+        maxDeposit: parseEther('1000000'),
         deploymentBlock: 5487678n,
       },
       {
