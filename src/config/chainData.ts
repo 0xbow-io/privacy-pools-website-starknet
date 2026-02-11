@@ -126,7 +126,7 @@ const testnetChainData: ChainData = {
     aspUrl: ASP_ENDPOINT,
     relayers: [
       // { name: 'FatRelayerLocal', url: 'http://localhost:3000' },
-      { name: 'FatRelayer', url: 'https://starknet-relayer-latest-149184580131.us-east1.run.app' },
+      { name: 'FatRelayer', url: 'https://starknet.fastrelay.xyz' },
     ],
     poolInfo: [
       {
